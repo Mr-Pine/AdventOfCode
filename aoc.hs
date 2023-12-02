@@ -18,7 +18,7 @@ numberStrings = ["one", "two", "three", "four", "five", "six", "seven", "eight",
 transform :: String -> String
 transform (x:xs) | isDigit x = x : transform xs
 transform l@(x:xs) = findNumber l ++ transform xs
-transform [] = []
+transform [] = ""
 
 findNumber :: String -> String
 findNumber xs = maybe "" (show . (+1)) (getIndex xs)
