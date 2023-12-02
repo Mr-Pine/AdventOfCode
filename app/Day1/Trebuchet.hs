@@ -1,11 +1,13 @@
+module Day1.Trebuchet where
 import Data.Char (isDigit)
 import Data.List (findIndex, isPrefixOf)
 
 
-main = do
+solveDay1 = do
     input <- readFile "./input/1.input"
     let partOneData = map extractNumbers (lines input)
     let partTwoData = map (extractNumbers . transform) (lines input)
+    putStrLn "Day 1 - Trebuchet?!:"
     print $ day1 partOneData
     print $ day1 partTwoData
 

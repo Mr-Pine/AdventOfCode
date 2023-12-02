@@ -1,5 +1,3 @@
 input
-aoc
-*.hi
-*.o
 gabriele*
+dist-*
