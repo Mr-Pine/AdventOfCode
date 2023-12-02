@@ -51,13 +51,6 @@ parseGame = Game <$> id <*> (parseSubset `sepBy1` (char ';' *> space))
     where
         id = string "Game" *> space *> decimal <* char ':' <* space :: Parser Int
 
-mySequence :: Parser (Char, Char, Char)
-mySequence = do
-  a <- char 'a'
-  b <- char 'b'
-  c <- char 'c'
-  return (a, b, c)
-
 parseSubset :: Parser Subset
 parseSubset = parsePairs <$> ((,) <$> decimal <* space <*> parseColor) `sepBy1` (char ',' *> space)
 
