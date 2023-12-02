@@ -1,4 +1,3 @@
-{-# LANGUAGE OverloadedStrings #-}
 module Day2.CubeConundrum where
 import Util (example, Parser, input, parseOrError)
 import Text.Megaparsec.Char (string, char, space, newline)
