@@ -32,8 +32,9 @@ executable aoc
 
     -- LANGUAGE extensions used by modules in this package.
     other-extensions: NamedFieldPuns
-    build-depends:    base >=4.17.2.0
+    build-depends:    base ^>=4.17.2.0
                     , megaparsec == 9.6.1
                     , text
+                    , pretty-simple
     hs-source-dirs:   app
     default-language: Haskell2010

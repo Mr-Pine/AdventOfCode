@@ -1,9 +1,11 @@
+{-# OPTIONS_GHC -Wno-deprecations #-}
 module Util where
 import Data.Void (Void)
 import Data.Text (Text)
 import Text.Megaparsec (Parsec, parse, errorBundlePretty)
 import GHC.RTS.Flags (RTSFlags(debugFlags))
 import Debug.Trace (trace)
+import Debug.Pretty.Simple (pTrace, pTraceWith)
 
 input i = readFile ("./input/" ++ show i ++ ".input")
 example i = readFile ("./input/" ++ show i ++ ".example")
@@ -19,6 +21,6 @@ parseOrError parser input = case parse parser "" input of
 
 debug :: Show a => a -> a
 debug = debugMessage ""
-debugMessage s x = trace (s ++ show x) x
+debugMessage s x = pTrace (s ++ show x) x
 
--- debugMessageWith s a = traceWith ((s ++) . a)
+debugMessageWith s a = pTraceWith ((s ++) . a)
