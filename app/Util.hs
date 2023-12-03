@@ -16,4 +16,6 @@ parseOrError parser input = case parse parser "" input of
         error "Parsing failed :("
     Right value -> pure value
 
-debug x = trace (show x) x
+debug :: Show a => a -> a
+debug = debugMessage ""
+debugMessage s x = trace (s ++ show x) x
