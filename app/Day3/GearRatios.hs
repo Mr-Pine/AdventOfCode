@@ -1,5 +1,5 @@
 module Day3.GearRatios where
-import Util (example, Parser, input, parseOrError, debug, debugMessage, debugMessageWith)
+import Util (example, Parser, input, parseOrError)
 import Text.Megaparsec.Char (string, char, space, newline, digitChar)
 import Text.Megaparsec (sepBy1, (<|>), endBy1, many, oneOf)
 import Text.Megaparsec.Char.Lexer (decimal)
@@ -13,21 +13,16 @@ import Text.Read (Lexeme(String))
 
 solveDay3 = do
     putStrLn "Day 3 - Gear Ratios:"
-    --input <- readFile ("./input/" ++ "3_kennwort" ++ ".input")
-    input <- example 3
+    input <- input 3
     schematic <- parseOrError parseSchematic input
     print $ part1 schematic
-    putStrLn (part2Show schematic)
-    print (part2 schematic)
+    print $ part2 schematic
 
 part1 schematic = (sum . map value . extractNumbersFromSchematic) (expand schematic)
---part2 schematic = (intercalate "\n" . map beautify . condenseSquares . map emplaceNumbers) (expand schematic)
--- part2 schematic = (beautify . filter ((2 ==) . length) . concat . transpose . condenseSquares . map emplaceNumbers) (expand schematic)
-part2Show schematic = (intercalate "\n" . map beautify . condenseSquares . debugMessage "emplaced: " . map emplaceNumbers) (expand schematic)
 part2 schematic = (sum . map gearRatio . filter ((2 ==) . length) . concat . condenseSquares . map emplaceNumbers) (expand schematic)
 
 gearRatio :: [GearEntry] -> Int
-gearRatio = product . debug . map extractNumber
+gearRatio = product . map extractNumber
     where
         extractNumber (Number CountedInt{value = x}) = x
 
@@ -65,14 +60,13 @@ transformWindow [x, y, Nothing] = transformWindow [x, y, Just (SchematicEntry Em
 data WindowedState = LeftEdge | Middle | RightEdge deriving (Eq, Show)
 
 windowed :: Show a => [a] -> [[Maybe a]]
-windoed [] = debugMessage "Trying to window empty" []
 windowed = myWindows LeftEdge
 
 myWindows :: Show a => WindowedState -> [a] -> [[Maybe a]]
 myWindows LeftEdge l = (Nothing : map Just (take 2 l)) : myWindows Middle l
 myWindows Middle l@(x:xs) = map Just (take 3 l) : myWindows (if length xs <= 2 then RightEdge else Middle) xs
 myWindows RightEdge l = [map Just (take 2 l) ++ [Nothing]]
-myWindows s l = debugMessage ("Dubious window: " ++ show s ++ show l) []
+myWindows s l = []
 
 
 expand = transpose . map expandHorizontally . transpose . map expandHorizontally
@@ -135,8 +129,6 @@ emplaceHitNumbers h b i []
 
 condenseSquares :: [[GearEntry]] -> [[[GearEntry]]]
 condenseSquares = map (map processSquare) . transpose . condense . transpose . condense
---condenseSquares = map (map processSquare) . debugMessageWith "Second Condense " showSquares . transpose . condense . transpose . condense
---condenseSquares = map (map processSquare) . condense . transpose . debugMessageWith "First Condense " showCondense . condense
 
 condense :: Show a => [[a]] -> [[[Maybe a]]]
 condense = map windowed
@@ -153,21 +145,8 @@ processSquare [x, Just y@[_, Just Gear, _], z] = (extract . filter numberFilter)
     where
         numberFilter (Just (Number _)) = True
         numberFilter _ = False
+
+        extract ((Just x):xs)= x : extract xs
+        extract (Nothing:xs)= extract xs
+        extract [] = []
 processSquare _ = []
-
-extract ((Just x):xs)= x : extract xs
-extract (Nothing:xs)= extract xs
-extract [] = []
-
-showSquares :: [[[Maybe [Maybe GearEntry]]]] -> String
-showSquares = intercalate "\n\n---\n\n" . map showLine
-    where
-        showLine = intercalate "\n\n" . map showSquare
-        showSquare :: [Maybe [Maybe GearEntry]] -> String
-        showSquare = intercalate "\n" . map (unwords . map show . extract) . extract
-
-showCondense :: [[[Maybe GearEntry]]] -> String
-showCondense = intercalate "\n" . map (intercalate "  " . map (intercalate "" . map showEntry))
-    where
-        showEntry Nothing = " "
-        showEntry (Just x) = show x
