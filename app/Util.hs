@@ -2,6 +2,8 @@ module Util where
 import Data.Void (Void)
 import Data.Text (Text)
 import Text.Megaparsec (Parsec, parse, errorBundlePretty)
+import GHC.RTS.Flags (RTSFlags(debugFlags))
+import Debug.Trace (trace)
 input i = readFile ("./input/" ++ show i ++ ".input")
 example i = readFile ("./input/" ++ show i ++ ".example")
 
@@ -13,3 +15,5 @@ parseOrError parser input = case parse parser "" input of
         putStrLn $ errorBundlePretty err
         error "Parsing failed :("
     Right value -> pure value
+
+debug x = trace (show x) x

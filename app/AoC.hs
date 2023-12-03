@@ -8,3 +8,4 @@ main = do
     solveDay2
     putStrLn ""
     solveDay3
+    
