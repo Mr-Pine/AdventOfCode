@@ -17,7 +17,7 @@ solveDay3 = do
     input <- example 3
     schematic <- parseOrError parseSchematic input
     print $ part1 schematic
-    -- putStrLn (part2Show schematic)
+    putStrLn (part2Show schematic)
     print (part2 schematic)
 
 part1 schematic = (sum . map value . extractNumbersFromSchematic) (expand schematic)
@@ -27,7 +27,7 @@ part2Show schematic = (intercalate "\n" . map beautify . condenseSquares . debug
 part2 schematic = (sum . map gearRatio . filter ((2 ==) . length) . concat . condenseSquares . map emplaceNumbers) (expand schematic)
 
 gearRatio :: [GearEntry] -> Int
-gearRatio = product . map extractNumber
+gearRatio = product . debug . map extractNumber
     where
         extractNumber (Number CountedInt{value = x}) = x
 
@@ -121,6 +121,7 @@ emplaceHitNumbers _ [] i (SchematicEntry{part = Symbol GearSymbol}:sx) = Gear : 
 emplaceHitNumbers _ [] i (s:sx) = NoGear : emplaceHitNumbers False [] i sx
 emplaceHitNumbers alreadyHit b i (SchematicEntry{part = Char c, hit = hit}:sx) = emplaceHitNumbers (alreadyHit || hit) (b ++ [c]) i sx
 emplaceHitNumbers hit b i (s:sx)
+    | hit && isGear s = replicate (length b) (Number (CountedInt i (read b))) ++ Gear : emplaceHitNumbers False [] (i + 1) sx
     | hit = replicate (length b) (Number (CountedInt i (read b))) ++ NoGear : emplaceHitNumbers False [] (i + 1) sx
     | not hit && isGear s = replicate (length b) NoGear ++ Gear : emplaceHitNumbers False [] i sx
     | not hit = replicate (length b + 1) NoGear ++ emplaceHitNumbers False [] i sx
