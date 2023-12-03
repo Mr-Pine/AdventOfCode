@@ -4,6 +4,7 @@ import Data.Text (Text)
 import Text.Megaparsec (Parsec, parse, errorBundlePretty)
 import GHC.RTS.Flags (RTSFlags(debugFlags))
 import Debug.Trace (trace)
+
 input i = readFile ("./input/" ++ show i ++ ".input")
 example i = readFile ("./input/" ++ show i ++ ".example")
 
@@ -19,3 +20,8 @@ parseOrError parser input = case parse parser "" input of
 debug :: Show a => a -> a
 debug = debugMessage ""
 debugMessage s x = trace (s ++ show x) x 
+
+-- debugMessageWith :: Show b => String -> (a -> b) -> a -> a
+debugMessageWith s a x = do
+    debugMessage s (a x)
+    x
