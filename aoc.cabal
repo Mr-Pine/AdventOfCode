@@ -28,9 +28,10 @@ executable aoc
     other-modules: Util
                  , Day1.Trebuchet
                  , Day2.CubeConundrum
+                 , Day3.GearRatios
 
     -- LANGUAGE extensions used by modules in this package.
-    -- other-extensions: 
+    other-extensions: NamedFieldPuns
     build-depends:    base ^>=4.17.2.0
                     , megaparsec == 9.6.1
                     , text
