@@ -18,4 +18,4 @@ parseOrError parser input = case parse parser "" input of
 
 debug :: Show a => a -> a
 debug = debugMessage ""
-debugMessage s x = trace (s ++ show x) x
+debugMessage s x = trace (s ++ show x) x 

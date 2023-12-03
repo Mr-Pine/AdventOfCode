@@ -12,13 +12,22 @@ import Data.Maybe (fromMaybe)
 
 solveDay3 = do
     putStrLn "Day 3 - Gear Ratios:"
-    input <- example 3
+    input <- input 3
     schematic <- parseOrError parseSchematic input
     print $ part1 schematic
-    putStrLn $ (intercalate "\n" . map show) (part2 schematic)
+    print (part2 schematic)
 
 part1 schematic = (sum . map value . extractNumbersFromSchematic) (expand schematic)
-part2 schematic = condenseSquares (map emplaceNumbers (expand schematic))
+--part2 schematic = (intercalate "\n" . map beautify . condenseSquares . map emplaceNumbers) (expand schematic)
+part2 schematic = (beautify . filter ((3 ==) . length) . filter (elem Gear) . concat . transpose . condenseSquares . map emplaceNumbers) (expand schematic)
+-- part2 schematic = (sum . map gearRatio . filter ((3 ==) . length) . filter (elem Gear) . concat . transpose . condenseSquares . map emplaceNumbers) (expand schematic)
+
+gearRatio :: [GearEntry] -> Int
+gearRatio = product . map extractNumber . filter noGear
+    where
+        noGear Gear = False
+        noGear _ = True
+        extractNumber (Number CountedInt{value = x}) = x
 
 data SchematicEntry = SchematicEntry {
     part :: PartType,
@@ -53,12 +62,12 @@ transformWindow [x, y, Nothing] = transformWindow [x, y, Just (SchematicEntry Em
 
 data WindowedState = LeftEdge | Middle | RightEdge deriving (Eq, Show)
 
-windowed :: [a] -> [[Maybe a]]
+windowed :: Show a => [a] -> [[Maybe a]]
 windowed = myWindows LeftEdge
 
-myWindows :: WindowedState -> [a] -> [[Maybe a]]
+myWindows :: Show a => WindowedState -> [a] -> [[Maybe a]]
 myWindows LeftEdge l = (Nothing : map Just (take 2 l)) : myWindows Middle l
-myWindows Middle l@(x:xs) = map Just (take 3 l) : myWindows (if length xs == 2 then RightEdge else Middle) xs
+myWindows Middle l@(x:xs) = map Just (take 3 l) : myWindows (if length xs <= 2 then RightEdge else Middle) xs
 myWindows RightEdge l = [map Just (take 2 l) ++ [Nothing]]
 
 
@@ -95,10 +104,10 @@ emplaceNumbers = emplaceHitNumbers False [] 0
 emplaceHitNumbers :: Bool -> String -> Int -> [SchematicEntry] -> [GearEntry] -- Current string hit -> NumberBuffer -> Index of number in line -> Remaining String -> Extracted Numbers
 emplaceHitNumbers _ [] i (SchematicEntry{part = Char c, hit = hit}:sx) = emplaceHitNumbers hit [c] i sx
 emplaceHitNumbers _ [] i (SchematicEntry{part = Symbol GearSymbol}:sx) = Gear : emplaceHitNumbers False [] i sx
-emplaceHitNumbers _ [] i (s:sx) = emplaceHitNumbers False [] i sx
+emplaceHitNumbers _ [] i (s:sx) = NoGear : emplaceHitNumbers False [] i sx
 emplaceHitNumbers alreadyHit b i (SchematicEntry{part = Char c, hit = hit}:sx) = emplaceHitNumbers (alreadyHit || hit) (b ++ [c]) i sx
 emplaceHitNumbers hit b i (s:sx)
-    | hit = replicate (length b) (Number (CountedInt i (read b))) ++ emplaceHitNumbers False [] (i + 1) sx
+    | hit = replicate (length b) (Number (CountedInt i (read b))) ++ NoGear : emplaceHitNumbers False [] (i + 1) sx
     | not hit && isGear s = Gear : emplaceHitNumbers False [] i sx
     | not hit = emplaceHitNumbers False [] i sx
     where
@@ -112,17 +121,27 @@ emplaceHitNumbers h b i []
 condenseSquares :: [[GearEntry]] -> [[[GearEntry]]]
 condenseSquares = reduce . condenseRows . transpose . condenseColumns
 
-reduce :: Eq a => [[[a]]] -> [[[a]]]
-reduce = map (map nub)
+reduce :: [[[GearEntry]]] -> [[[GearEntry]]]
+reduce = map (map (nub . removeNos))
+    where
+        removeNos (NoGear:xs) = removeNos xs
+        removeNos (x:xs) = x : removeNos xs
+        removeNos [] = []
 
 condenseColumns :: [[GearEntry]] -> [[[GearEntry]]]
 condenseColumns = map condenseColumn
+
+beautify = intercalate ",  " . map (unwords . repr)
+repr = map reprEntry
+reprEntry Gear = "*"
+reprEntry (Number CountedInt{value = x}) = show x
+reprEntry NoGear = "_"
 
 condenseColumn = map (extract . filterGears) . windowed
     where
         filterGears [Just Gear, x, y] = [Nothing, x, y]
         filterGears [x, y, Just Gear] = [x, y, Nothing]
-        filterGears a = debugMessage "filter Gears: " a
+        filterGears a = a
 
 extract ((Just x):xs)= x : extract xs
 extract (Nothing:xs)= extract xs
