@@ -7,19 +7,22 @@ import Text.Megaparsec (sepBy, sepBy1, endBy)
 
 solveDay4 = do
   putStrLn "Day 4 - Gear Ratios:"
-  input <- input 4
+  input <- example 4
   scratchcards <- parseOrError scratchcardsParser input
   print $ part1 scratchcards
+  print $ part2 scratchcards
 
 part1 = sum . map (debugMessage "Value " . value)
+part2 cards = length (replaceCards cards cards)
 
 data Scratchcard = Scratchcard {
+    index :: Int,
     cardNumbers :: [Int],
     winningNumbers :: [Int]
 } deriving Show
 
 value :: Scratchcard -> Int
-value Scratchcard {cardNumbers = cardNumbers, winningNumbers = winningNumbers} = 2 `power` ((length . filter (`elem` winningNumbers)) cardNumbers - 1)
+value card = 2 `power` (length (wonNumbers card) - 1)
 
 power x y
     | y < 0 = 0
@@ -29,6 +32,16 @@ scratchcardsParser :: Parser [Scratchcard]
 scratchcardsParser = scratchcardParser `sepBy1` newline
 
 scratchcardParser :: Parser Scratchcard
-scratchcardParser = Scratchcard <$> (prefix *> decimal `endBy` space <* space <* char '|') <*> (space *> decimal `sepBy` hspace)
+scratchcardParser = Scratchcard <$> index <*> (decimal `endBy` space <* space <* char '|') <*> (space *> decimal `sepBy` hspace)
   where
-    prefix = string "Card" *> space *> decimal *> char ':' *> space
+    index = string "Card" *> space *> decimal <* char ':' <* space
+
+replaceCards :: [Scratchcard] -> [Scratchcard] -> [Scratchcard]
+replaceCards full (x@Scratchcard{index = base}:xs) = x : additional ++ replaceCards full (additional ++ xs)
+  where
+    additional = (map ((full!!) . (+ base)) . debugMessage ("next Indices from Card " ++ show x ++ ": ") . getNextIndices) x
+replaceCards _ [] = []
+
+getNextIndices = enumFromTo 1 . length . wonNumbers
+
+wonNumbers Scratchcard{cardNumbers = cardNumbers, winningNumbers = winningNumbers} = filter (`elem` winningNumbers) cardNumbers
