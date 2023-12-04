@@ -32,7 +32,7 @@ executable aoc
                  , Day4.Scratchcards
 
     -- LANGUAGE extensions used by modules in this package.
-    other-extensions: NamedFieldPuns
+    other-extensions: NamedFieldPuns, OverloadedRecordDot, RecordWildCards
     build-depends:    base ^>=4.17.2.0
                     , megaparsec == 9.6.1
                     , text
