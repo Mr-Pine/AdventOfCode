@@ -1,19 +1,19 @@
 module Day4.Scratchcards (solveDay4) where
 
-import Util (example, Parser, parseOrError, debugMessage, input)
+import Util (example, Parser, parseOrError, debugMessage, input, debugMessageWith)
 import Text.Megaparsec.Char (string, space, char, newline, hspace)
 import Text.Megaparsec.Char.Lexer (decimal)
 import Text.Megaparsec (sepBy, sepBy1, endBy)
 
 solveDay4 = do
   putStrLn "Day 4 - Gear Ratios:"
-  input <- example 4
+  input <- input 4
   scratchcards <- parseOrError scratchcardsParser input
   print $ part1 scratchcards
   print $ part2 scratchcards
 
 part1 = sum . map (debugMessage "Value " . value)
-part2 cards = length (replaceCards cards cards)
+part2 cards = replaceCards cards cards
 
 data Scratchcard = Scratchcard {
     index :: Int,
@@ -36,12 +36,12 @@ scratchcardParser = Scratchcard <$> index <*> (decimal `endBy` space <* space <*
   where
     index = string "Card" *> space *> decimal <* char ':' <* space
 
-replaceCards :: [Scratchcard] -> [Scratchcard] -> [Scratchcard]
-replaceCards full (x@Scratchcard{index = base}:xs) = x : additional ++ replaceCards full (additional ++ xs)
+replaceCards :: [Scratchcard] -> [Scratchcard] -> Int
+replaceCards full (x@Scratchcard{index = base}:xs) = 1 + replaceCards full (debugMessageWith ("next Cards from Card " ++ (show . index) x ++ ": ") (show . map (show .index)) additional) + replaceCards full xs
   where
-    additional = (map ((full!!) . (+ base)) . debugMessage ("next Indices from Card " ++ show x ++ ": ") . getNextIndices) x
-replaceCards _ [] = []
+    additional = (map ((full!!) . (+ base)) . getNextIndices) x
+replaceCards _ [] = 0
 
-getNextIndices = enumFromTo 1 . length . wonNumbers
+getNextIndices = enumFromTo 0 . subtract 1 . length . wonNumbers
 
 wonNumbers Scratchcard{cardNumbers = cardNumbers, winningNumbers = winningNumbers} = filter (`elem` winningNumbers) cardNumbers
