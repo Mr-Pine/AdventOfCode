@@ -4,6 +4,7 @@ import Day3.GearRatios (solveDay3)
 import System.Environment (getArgs)
 import Data.List (intersperse)
 import Day4.Scratchcards (solveDay4)
+import Day5.Fertilizer (solveDay5)
 
 main = do
     argStrings <- getArgs
@@ -22,4 +23,4 @@ allIfEmpty [] = [1..]
 allIfEmpty x = x
 
 days :: [IO ()]
-days = [solveDay1, solveDay2, solveDay3, solveDay4]
+days = [solveDay1, solveDay2, solveDay3, solveDay4, solveDay5]
