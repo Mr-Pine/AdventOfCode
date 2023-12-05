@@ -83,15 +83,15 @@ transform :: Map -> [Range] -> [Range]
 transform Map{..} = concatMap (filter (\range -> range.length > 0) . flip transformRanges mappings)
 
 location :: [Map] -> [Range] -> [Range]
-location m rs = foldl (flip transform) rs m
--- location (m:ms) rs = location ms (debugMessage ("Mapped with map " ++ m.fromString ++ ": ") (transform m rs))
--- location [] rs = rs
+-- location m rs = foldl (flip transform) rs m
+location (m:ms) rs = location ms (debugMessage ("Mapped with map " ++ m.fromString ++ ": ") (transform m rs))
+location [] rs = rs
 
 transformRanges :: Range -> [Mapping] -> [Range]
 transformRanges elem@Range{from = elemFrom, length = elemLength} (x@Mapping{..}:xs)
   | startInSource && endInSource = debugMessage (show elem ++ " fully in source " ++ show x ++ " :") [Range startInDestination lengthOverlap]
   | startInSource = debugMessage (show elem ++ " has only start in source " ++ show x ++ " :") (Range startInDestination lengthOverlap : transformRanges (Range sourceEnd (debugMessage "hilfe " (elemLength - lengthOverlap))) xs)
-  | endInSource = debugMessage (show elem ++ "has only end in source " ++ show x ++ " :") [Range elemFrom (elemLength - lengthOverlap)]
+  | endInSource = debugMessage (show elem ++ " has only end in source " ++ show x ++ " :") [Range elemFrom (elemLength - lengthOverlap), Range startInDestination lengthOverlap]
   | otherwise = transformRanges elem xs
   where
     elemEnd = elemFrom + elemLength
