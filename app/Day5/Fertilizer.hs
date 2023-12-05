@@ -1,4 +1,5 @@
 {-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE OverloadedRecordDot #-}
 
 module Day5.Fertilizer (solveDay5) where
 
@@ -7,51 +8,57 @@ import qualified Text.Megaparsec.Char.Lexer as L
 import Text.Megaparsec (some, endBy, sepEndBy, sepBy)
 import Text.Megaparsec.Char (alphaNumChar, string, newline, space, hspace)
 import GHC.Data.Maybe (firstJusts, fromMaybe)
+import Data.List (singleton, sort, sortBy)
+import Control.Parallel.Strategies (parMap, rdeepseq, rseq)
 
 solveDay5 = do
   putStrLn "Day 5 - If You Give A Seed A Fertilizer:"
   input <- input 5
   almanac1 <- parseOrError (almanacParser seedsParserPart1) input
   almanac2 <- parseOrError (almanacParser seedsParserPart2) input
+
   print $ solve almanac1
   print $ solve almanac2
--- print $ part2 scratchcards
 
-solve Almanac{..} = (minimum . map (`location` maps)) seeds
+solve Almanac{..} = (minimum . parMap rdeepseq (minimum . map from . location maps . singleton)) seedRanges
+
+data Range = Range
+  { from :: Int,
+    length :: Int
+  } deriving (Show, Eq)
+
+instance Ord Range where
+  compare a b = compare a.from b.from
 
 data Almanac = Almanac
-  { seeds :: [Int],
+  { seedRanges :: [Range],
     maps :: [Map]
   } deriving (Show)
 
 data Mapping = Mapping
-  { destinationStart :: Int,
-    sourceStart :: Int,
-    rangeLength :: Int
+  { destination :: Range,
+    source :: Range
   } deriving (Show)
 
 data Map = Map
-  { from :: String,
-    to :: String,
+  { fromString :: String,
+    toString :: String,
     mappings :: [Mapping]
   }
   deriving (Show)
 
-almanacParser :: Parser [Int] -> Parser Almanac
+almanacParser :: Parser [Range] -> Parser Almanac
 almanacParser seedsParser = Almanac <$> seedsParser <* space <*>  mapsParser
 
-seedsParserPart1 :: Parser [Int]
-seedsParserPart1 = string "seeds:" *> space *> L.decimal `sepBy` hspace
-
-seedsParserPart2 :: Parser [Int]
-seedsParserPart2 = string "seeds:" *> space *> seedRanges
+seedsParserPart1 :: Parser [Range]
+seedsParserPart1 = map singleRange <$> (string "seeds:" *> space *> L.decimal `sepBy` hspace)
   where
-    enumFromFor a b = [a .. a + b - 1]
-    seedRange = enumFromFor <$>  L.decimal <* space <*> L.decimal :: Parser [Int]
-    seedRanges = do
-      ranges <- seedRange `sepBy` hspace
-      let concated = concat ranges
-      return concated
+    singleRange x = Range x 1
+
+seedsParserPart2 :: Parser [Range]
+seedsParserPart2 = string "seeds:" *> space *> seedRange `sepBy` hspace
+  where
+    seedRange = Range <$>  L.decimal <* space <*> L.decimal :: Parser Range
 
 
 mapsParser :: Parser [Map]
@@ -60,19 +67,39 @@ mapsParser = mapParser `sepEndBy` space
 mapParser :: Parser Map
 mapParser = firstLine <*> mappingParser `sepEndBy` space
     where
-        firstLine = Map <$> some alphaNumChar <* string "-to-" <*> some alphaNumChar <* string " map:" <* newline
+        sortMappings Map{..} = Map fromString toString (sortBy (\a b -> compare a.source b.source) mappings)
+        sortedConstructor a b c = sortMappings (Map a b c)
+        firstLine = sortedConstructor <$> some alphaNumChar <* string "-to-" <*> some alphaNumChar <* string " map:" <* newline
 
 mappingParser :: Parser Mapping
-mappingParser = Mapping <$> number <*> number <*> number
-    where number = L.lexeme space L.decimal
+mappingParser = mapping <$> number <*> number <*> number
+  where
+    number = L.lexeme space L.decimal
+    mapping s d l = Mapping (Range s l) (Range d l)
 
-mapTo :: Int -> Mapping -> Maybe Int
-mapTo n x@Mapping{..}
-    | n >= sourceStart && n <= sourceStart + rangeLength = Just (destinationStart + (n - sourceStart))
-    | otherwise = Nothing
 
-transform :: Map -> Int -> Int
-transform Map{..} n = (fromMaybe n . firstJusts . map (mapTo n)) mappings
 
-location :: Int -> [Map] -> Int
-location = foldl (flip transform)
+transform :: Map -> [Range] -> [Range]
+transform Map{..} = concatMap (filter (\range -> range.length > 0) . flip transformRanges mappings)
+
+location :: [Map] -> [Range] -> [Range]
+location m rs = foldl (flip transform) rs m
+
+transformRanges :: Range -> [Mapping] -> [Range]
+transformRanges elem@Range{from = elemFrom, length = elemLength} (x@Mapping{..}:xs)
+  | startInSource && endInSource = [Range startInDestination lengthOverlap]
+  | startInSource = Range startInDestination lengthOverlap : transformRanges (Range sourceEnd (source.length - lengthOverlap)) xs
+  | endInSource = [Range elemFrom (elemLength - lengthOverlap)]
+  | otherwise = transformRanges elem xs
+  where
+    elemEnd = elemFrom + elemLength
+    sourceEnd = source.from + source.length
+
+    startInSource = elemFrom >= source.from && elemFrom <= sourceEnd
+    endInSource = elemEnd <= sourceEnd && elemEnd >= source.from
+
+    lengthOverlap = min elemEnd sourceEnd - max elemFrom source.from
+
+    startInDestination = (elemFrom - source.from) + destination.from
+
+transformRanges element [] = [element]
