@@ -31,6 +31,7 @@ executable aoc
                  , Day3.GearRatios
                  , Day4.Scratchcards
                  , Day5.Fertilizer
+                 , Day6.WaitForIt
 
     -- LANGUAGE extensions used by modules in this package.
     other-extensions: NamedFieldPuns

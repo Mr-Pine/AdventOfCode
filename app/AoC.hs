@@ -1,10 +1,11 @@
+import System.Environment (getArgs)
+import Data.List (intersperse)
 import Day1.Trebuchet (solveDay1)
 import Day2.CubeConundrum (solveDay2)
 import Day3.GearRatios (solveDay3)
-import System.Environment (getArgs)
-import Data.List (intersperse)
 import Day4.Scratchcards (solveDay4)
 import Day5.Fertilizer (solveDay5)
+import Day6.WaitForIt (solveDay6)
 
 main = do
     argStrings <- getArgs
@@ -23,4 +24,4 @@ allIfEmpty [] = [1..]
 allIfEmpty x = x
 
 days :: [IO ()]
-days = [solveDay1, solveDay2, solveDay3, solveDay4, solveDay5]
+days = [solveDay1, solveDay2, solveDay3, solveDay4, solveDay5, solveDay6]
