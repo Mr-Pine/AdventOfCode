@@ -3,7 +3,7 @@
 
 module Day5.Fertilizer (solveDay5) where
 
-import Util (example, parseOrError, Parser, debugMessage, input)
+import Util (example, parseOrError, Parser, debugMessage, input, debugMessageWith, Prettify, prettify)
 import qualified Text.Megaparsec.Char.Lexer as L
 import Text.Megaparsec (some, endBy, sepEndBy, sepBy)
 import Text.Megaparsec.Char (alphaNumChar, string, newline, space, hspace)
@@ -30,6 +30,9 @@ data Range = Range
 instance Ord Range where
   compare a b = compare a.from b.from
 
+instance Prettify Range where
+  prettify Range{..} = "[" ++ show from ++ " -" ++ show length ++ "> " ++ show (from + length) ++ ")"
+
 data Almanac = Almanac
   { seedRanges :: [Range],
     maps :: [Map]
@@ -46,6 +49,9 @@ data Map = Map
     mappings :: [Mapping]
   }
   deriving (Show)
+
+instance Prettify Mapping where
+  prettify Mapping{..} = "Mapping from " ++ prettify source ++ " to " ++ prettify destination
 
 almanacParser :: Parser [Range] -> Parser Almanac
 almanacParser seedsParser = Almanac <$> seedsParser <* space <*>  mapsParser
@@ -88,20 +94,21 @@ location (m:ms) rs = location ms (debugMessage ("Mapped with map " ++ m.fromStri
 location [] rs = rs
 
 transformRanges :: Range -> [Mapping] -> [Range]
-transformRanges elem@Range{from = elemFrom, length = elemLength} (x@Mapping{..}:xs)
-  | startInSource && endInSource = debugMessage (show elem ++ " fully in source " ++ show x ++ " :") [Range startInDestination lengthOverlap]
-  | startInSource = debugMessage (show elem ++ " has only start in source " ++ show x ++ " :") (Range startInDestination lengthOverlap : transformRanges (Range sourceEnd (debugMessage "hilfe " (elemLength - lengthOverlap))) xs)
-  | endInSource = debugMessage (show elem ++ " has only end in source " ++ show x ++ " :") [Range elemFrom (elemLength - lengthOverlap), Range startInDestination lengthOverlap]
-  | otherwise = transformRanges elem xs
+transformRanges seeds@Range{from = seedsFrom, length = seedsLength} (x@Mapping{..}:xs)
+  | startInSource && endInSource = debugMessage (show (prettify seeds ++ " fully in source " ++ prettify x ++ ":")) [Range startInDestination lengthOverlap]
+  | startInSource = debugMessage (show (prettify seeds ++ " has only start in source " ++ prettify x ++ ":")) (Range startInDestination lengthOverlap : transformRanges (Range sourceEnd (seedsLength - lengthOverlap)) xs)
+  | endInSource = debugMessage (show (prettify seeds ++ " has only end in source " ++ prettify x ++ "; startInSource=" ++ show startInSource ++ "= elemFrom >= source.from && elemFrom < sourceEnd=" ++ show (seedsFrom >= source.from) ++ "&&" ++ show (seedsFrom < sourceEnd) ++ " = " ++ show seedsFrom ++ ">=" ++ show source.from ++ " && .." ++ ":")) [Range seedsFrom (seedsLength - lengthOverlap), Range startInDestination lengthOverlap]
+  | lengthOverlap > 0 = debugMessage "Mapping included in source" (Range seedsFrom (source.from - seedsFrom)) : Range destination.from lengthOverlap : transformRanges (Range sourceEnd (seedsEnd - sourceEnd)) xs
+  | otherwise = debugMessage (show ("Ignored mapping: " ++ prettify x ++ " for seedRange " ++ prettify seeds)) (transformRanges seeds xs)
   where
-    elemEnd = elemFrom + elemLength
+    seedsEnd = seedsFrom + seedsLength
     sourceEnd = source.from + source.length
 
-    startInSource = elemFrom >= source.from && elemFrom <= sourceEnd
-    endInSource = elemEnd <= sourceEnd && elemEnd >= source.from
+    startInSource = seedsFrom >= source.from && seedsFrom < sourceEnd
+    endInSource = seedsEnd <= sourceEnd && seedsEnd >= source.from
 
-    lengthOverlap = debugMessage "test" (min elemEnd sourceEnd - max elemFrom source.from)
+    lengthOverlap = min seedsEnd sourceEnd - max seedsFrom source.from
 
-    startInDestination = (elemFrom - source.from) + destination.from
+    startInDestination = (seedsFrom - source.from) + destination.from
 
 transformRanges element [] = [element]

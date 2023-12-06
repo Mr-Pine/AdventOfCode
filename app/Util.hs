@@ -1,4 +1,7 @@
 {-# OPTIONS_GHC -Wno-deprecations #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE UndecidableInstances #-}
+
 module Util where
 import Data.Void (Void)
 import Data.Text (Text)
@@ -19,8 +22,16 @@ parseOrError parser input = case parse parser "" input of
         error "Parsing failed :("
     Right value -> pure value
 
-debug :: Show a => a -> a
+debug :: Prettify a => a -> a
 debug = debugMessage ""
-debugMessage s x = pTrace (s ++ show x ++ "\n") x
+debugMessage :: Prettify a => String -> a -> a
+debugMessage = debugMessageWith prettify
 
-debugMessageWith s a = pTraceWith ((s ++) . a)
+debugMessageWith :: (a -> [Char]) -> [Char] -> a -> a
+debugMessageWith a s = pTraceWith ((s ++) . a)
+
+class Prettify a where
+  prettify :: a -> String
+
+instance Prettify a => Prettify [a] where
+    prettify = show . map prettify
