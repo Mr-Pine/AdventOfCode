@@ -1,28 +1,25 @@
-{-# LANGUAGE OverloadedRecordDot #-}
 module Day7.CamelCards (solveDay7) where
 
-import Util (example, Parser, parseOrError, debugMessage, Prettify (prettify), debug, debugMessagePlain, input)
+import Util (example, Parser, parseOrError, Prettify (prettify), input)
 import Text.Megaparsec.Char (space, char, digitChar)
 import qualified Text.Megaparsec.Char.Lexer as L
-import Text.Megaparsec (sepEndBy, count, (<|>))
+import Text.Megaparsec (sepEndBy, count, (<|>), ErrorItem (Label))
 import Data.List (singleton, group, partition, sort, sortBy, find, maximumBy)
-import Data.Maybe (fromMaybe)
+import Data.Maybe (fromMaybe, listToMaybe)
 import Data.Function (on)
 
 solveDay7 = do
-  input <- example 7
+  input <- input 7
   putStrLn "Day 7 - Camel Cards:"
   entries1 <- parseOrError (entriesParser classifyPart1) input
   entries2 <- parseOrError (entriesParser classifyPart2) input
-  --print $ solve part1LabelOrder entries1
+  print $ solve part1LabelOrder entries1
   print $ solve part2LabelOrder entries2
-  print $ classifyPart2 [J,J,Value 2, Value 3, Value 4]
 
-solve :: (Label -> Label -> Ordering) -> [Entry] -> Int
-solve labelOrder = sum . zipWith (*) [1..] . map bid . debugMessagePlain "Sorted" . sortBy entryOrder
+solve labelOrder = sum . zipWith (*) [1..] . map bid . sortBy entryOrder
   where
     entryOrder :: Entry -> Entry -> Ordering
-    entryOrder a b = handComparison a.hand b.hand
+    entryOrder = handComparison `on` hand
 
     handComparison = compareHands (compareBy labelOrder)
 
@@ -30,11 +27,11 @@ solve labelOrder = sum . zipWith (*) [1..] . map bid . debugMessagePlain "Sorted
       | handType1 == handType2 = comparing label1 label2
       | otherwise = compare handType1 handType2
 
-    compareBy ordering xs ys = fromMaybe EQ $ find (/=EQ) (zipWith ordering xs ys)
+    compareBy ordering xs ys = fromMaybe EQ . find (/=EQ) $ zipWith ordering xs ys
 
 type Classifier = [Label] -> Type
 classifyPart1 :: Classifier
-classifyPart1 = classifyGroups . groupBy2 (==)
+classifyPart1 = classifyGroups . group . sort
   where
     classifyGroups xs
       | length xs == 1 = FiveOfAKind
@@ -47,27 +44,22 @@ classifyPart1 = classifyGroups . groupBy2 (==)
 
 
 classifyPart2 :: Classifier
-classifyPart2 = classifyPart1 . findBest []
+classifyPart2 labels = let
+    mostCommon = maybe J (fromMaybe J . listToMaybe . maximumBy (compare `on` length)) . maybeNotEmpty . group . sort . filter (/=J) $ labels
+  in classifyPart1 . map (\l -> if l == J then mostCommon else l) $ labels
   where
-    jReplacements = [T, Q, K, A] ++ map Value [2..9]
-    findBest xs (J:ys) = maximumBy (compare `on` classifyPart1) $ map (\replacement -> findBest xs (replacement : ys)) jReplacements
-    findBest xs (y:ys) = findBest (xs ++ [y]) ys
-    findBest xs [] = xs
+    maybeNotEmpty [] = Nothing
+    maybeNotEmpty xs = Just xs
 
 
 type LabelOrder = Label -> Label -> Ordering
 part1LabelOrder :: LabelOrder
 part1LabelOrder = compare
 part2LabelOrder :: LabelOrder
+part2LabelOrder J J = EQ
 part2LabelOrder J _ = LT
 part2LabelOrder _ J = GT
 part2LabelOrder x y = compare x y
-
-type LabelEquality = Label -> Label -> Bool
-part1LabelEquality :: LabelEquality
-part1LabelEquality = (==)
-part2LabelEquality :: LabelEquality
-part2LabelEquality x y = x == y || x == J || y == J
 
 data Entry = Entry
   { hand :: Hand,
@@ -105,10 +97,3 @@ handParser classify = getHand <$> count 5 labelParser
         parseValueLabel = Value . read . singleton
 
         getHand labels = Hand labels (classify labels)
-
-groupBy2 :: (a -> a -> Bool) -> [a] -> [[a]]
-groupBy2 = go [] where
-    go acc comp [] = acc
-    go acc comp (h:t) =
-        let (hs, nohs) = partition (comp h) t
-        in go ((h:hs):acc) comp nohs
