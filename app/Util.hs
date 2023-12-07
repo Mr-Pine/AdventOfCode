@@ -27,6 +27,12 @@ debug = debugMessage ""
 debugMessage :: Prettify a => String -> a -> a
 debugMessage = debugMessageWith prettify
 
+debugPlain :: Show a => a -> a
+debugPlain = debugMessagePlain ""
+debugMessagePlain :: Show a => String -> a -> a
+debugMessagePlain = debugMessageWith show
+
+
 debugMessageWith :: (a -> [Char]) -> [Char] -> a -> a
 debugMessageWith a s = pTraceWith ((s ++) . a)
 
