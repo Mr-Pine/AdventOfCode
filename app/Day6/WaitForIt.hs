@@ -8,6 +8,7 @@ import qualified Text.Megaparsec.Char.Lexer as L
 import Util (Parser, example, input, parseOrError)
 
 solveDay6 = do
+  putStrLn "Day 6 - Wait for it:"
   input <- input 6
   races1 <- parseOrError (racesParser part1ListParser) input
   races2 <- parseOrError (racesParser part2ListParser) input

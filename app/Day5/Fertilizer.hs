@@ -17,7 +17,7 @@ solveDay5 = do
   almanac1 <- parseOrError (almanacParser seedsParserPart1) input
   almanac2 <- parseOrError (almanacParser seedsParserPart2) input
 
-  --print $ solve almanac1
+  print $ solve almanac1
   print $ solve almanac2
 
 solve Almanac{..} = (minimum . parMap rdeepseq (minimum . map from . location maps . singleton)) seedRanges
@@ -29,9 +29,6 @@ data Range = Range
 
 instance Ord Range where
   compare a b = compare a.from b.from
-
-instance Prettify Range where
-  prettify Range{..} = "[" ++ show from ++ " -" ++ show length ++ "> " ++ show (from + length) ++ ")"
 
 data Almanac = Almanac
   { seedRanges :: [Range],
@@ -49,9 +46,6 @@ data Map = Map
     mappings :: [Mapping]
   }
   deriving (Show)
-
-instance Prettify Mapping where
-  prettify Mapping{..} = "Mapping from " ++ prettify source ++ " to " ++ prettify destination
 
 almanacParser :: Parser [Range] -> Parser Almanac
 almanacParser seedsParser = Almanac <$> seedsParser <* space <*>  mapsParser
@@ -89,17 +83,15 @@ transform :: Map -> [Range] -> [Range]
 transform Map{..} = concatMap (filter (\range -> range.length > 0) . flip transformRanges mappings)
 
 location :: [Map] -> [Range] -> [Range]
--- location m rs = foldl (flip transform) rs m
-location (m:ms) rs = location ms (debugMessage ("Mapped with map " ++ m.fromString ++ ": ") (transform m rs))
-location [] rs = rs
+location m rs = foldl (flip transform) rs m
 
 transformRanges :: Range -> [Mapping] -> [Range]
 transformRanges seeds@Range{from = seedsFrom, length = seedsLength} (x@Mapping{..}:xs)
-  | startInSource && endInSource = debugMessage (show (prettify seeds ++ " fully in source " ++ prettify x ++ ":")) [Range startInDestination lengthOverlap]
-  | startInSource = debugMessage (show (prettify seeds ++ " has only start in source " ++ prettify x ++ ":")) (Range startInDestination lengthOverlap : transformRanges (Range sourceEnd (seedsLength - lengthOverlap)) xs)
-  | endInSource = debugMessage (show (prettify seeds ++ " has only end in source " ++ prettify x ++ "; startInSource=" ++ show startInSource ++ "= elemFrom >= source.from && elemFrom < sourceEnd=" ++ show (seedsFrom >= source.from) ++ "&&" ++ show (seedsFrom < sourceEnd) ++ " = " ++ show seedsFrom ++ ">=" ++ show source.from ++ " && .." ++ ":")) [Range seedsFrom (seedsLength - lengthOverlap), Range startInDestination lengthOverlap]
-  | lengthOverlap > 0 = debugMessage "Mapping included in source" (Range seedsFrom (source.from - seedsFrom)) : Range destination.from lengthOverlap : transformRanges (Range sourceEnd (seedsEnd - sourceEnd)) xs
-  | otherwise = debugMessage (show ("Ignored mapping: " ++ prettify x ++ " for seedRange " ++ prettify seeds)) (transformRanges seeds xs)
+  | startInSource && endInSource = [Range startInDestination lengthOverlap]
+  | startInSource = Range startInDestination lengthOverlap : transformRanges (Range sourceEnd (seedsLength - lengthOverlap)) xs
+  | endInSource = [Range seedsFrom (seedsLength - lengthOverlap), Range startInDestination lengthOverlap]
+  | lengthOverlap > 0 = Range seedsFrom (source.from - seedsFrom) : Range destination.from lengthOverlap : transformRanges (Range sourceEnd (seedsEnd - sourceEnd)) xs
+  | otherwise = transformRanges seeds xs
   where
     seedsEnd = seedsFrom + seedsLength
     sourceEnd = source.from + source.length
