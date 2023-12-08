@@ -5,7 +5,7 @@ import Data.Maybe (fromJust)
 import Text.Megaparsec (count, many, sepEndBy, (<|>))
 import Text.Megaparsec.Char (alphaNumChar, char, space, string)
 import Util (Parser, example, input, parseOrError, debugMessage, debugMessagePlain)
-import Prelude hiding (Left, Right, traverse)
+import Prelude hiding (traverse)
 
 solveDay8 = do
   putStrLn "Day 8 - Haunted Wasteland"
@@ -15,18 +15,17 @@ solveDay8 = do
   print $ part1 directions graph
 
 part1 :: [Direction] -> NodeMap -> Int
-part1 directions nodes = length . takeWhile (/="ZZZ") . map identifier . traverse nodes (cycle directions) $ root
+part1 directions nodes = length . traverse nodes (cycle directions) $ root
   where
     root = fromJust $ Map.lookup "AAA" nodes
 
-data Direction = Left | Right deriving (Show, Eq)
+data Direction = L | R deriving (Show, Eq)
 
-data Node = Leaf String | Inner String String String deriving (Show, Eq)
-identifier (Leaf n) = n
-identifier (Inner n _ _) = n
+data Node = Node String String String deriving (Show, Eq)
+identifier (Node n _ _) = n
 
 directionsParser :: Parser [Direction]
-directionsParser = many (Left <$ char 'L' <|> Right <$ char 'R')
+directionsParser = many (L <$ char 'L' <|> R <$ char 'R')
 
 type NodeMap = Map.Map String Node
 
@@ -36,21 +35,17 @@ parser = (,) <$> directionsParser <* space <*> graphRepresentationParser
 graphRepresentationParser :: Parser [Node]
 graphRepresentationParser = nodeRepresentationParser `sepEndBy` space
   where
-    nodeRepresentationParser = buildNode <$> identifier <* string " = (" <*> identifier <* string ", " <*> identifier <* char ')'
+    nodeRepresentationParser = Node <$> identifier <* string " = (" <*> identifier <* string ", " <*> identifier <* char ')'
     identifier = count 3 alphaNumChar :: Parser String
-    buildNode n l r
-      | n == l && l == r = Leaf n
-      | otherwise = Inner n l r
 
 nodeMap :: [Node] -> NodeMap
-nodeMap nodeList = nodes--getNode root
+nodeMap nodeList = nodes
   where
     nodes = Map.fromList . map (\node -> (identifier node, node)) $ nodeList
 
 traverse :: NodeMap -> [Direction] -> Node -> [Node]
-traverse = traverseGraph []
+traverse _ _ (Node "ZZZ" _ _) = []
+traverse nodes (d:ds) node = node : traverse nodes ds (nextNode nodes d node)
   where
-    traverseGraph path _ _ node | identifier node == "ZZZ" = path
-    traverseGraph path nodes _ leaf@(Leaf _) = leaf : path
-    traverseGraph path nodes (Left:xs) node@(Inner _ l r) = traverseGraph (node : path) nodes xs (fromJust $ Map.lookup l nodes)
-    traverseGraph path nodes (Right:xs) node@(Inner _ l r) = traverseGraph (node : path) nodes xs (fromJust $ Map.lookup r nodes)
+    nextNode nodes L (Node _ l _) = nodes Map.! l
+    nextNode nodes R (Node _ _ r) = nodes Map.! r
