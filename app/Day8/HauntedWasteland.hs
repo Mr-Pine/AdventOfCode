@@ -13,11 +13,20 @@ solveDay8 = do
   (directions, nodeRepresentations) <- parseOrError parser input
   let graph = nodeMap nodeRepresentations
   print $ part1 directions graph
+  print $ part2 directions graph
 
-part1 :: [Direction] -> NodeMap -> Int
-part1 directions nodes = length . traverse nodes (cycle directions) $ root
+part1 directions nodes = length . takeWhile ((/="ZZZ") . identifier) . traverse nodes (cycle directions) $ root
   where
-    root = fromJust $ Map.lookup "AAA" nodes
+    root = nodes Map.! "AAA"
+
+part2 directions nodes = foldl1 lcm . map (length . takeWhile isNotEnd . traverse nodes (cycle directions)) $ roots
+  where
+    roots = filter isStart (Map.elems nodes)
+    isStart (Node [_, _, 'A'] _ _) = True
+    isStart _ = False
+
+    isNotEnd (Node [_, _, 'Z'] _ _) = False
+    isNotEnd _ = True
 
 data Direction = L | R deriving (Show, Eq)
 
@@ -43,9 +52,8 @@ nodeMap nodeList = nodes
   where
     nodes = Map.fromList . map (\node -> (identifier node, node)) $ nodeList
 
+nextNode nodes L (Node _ l _) = nodes Map.! l
+nextNode nodes R (Node _ _ r) = nodes Map.! r
+
 traverse :: NodeMap -> [Direction] -> Node -> [Node]
-traverse _ _ (Node "ZZZ" _ _) = []
 traverse nodes (d:ds) node = node : traverse nodes ds (nextNode nodes d node)
-  where
-    nextNode nodes L (Node _ l _) = nodes Map.! l
-    nextNode nodes R (Node _ _ r) = nodes Map.! r
