@@ -12,7 +12,6 @@ solveDay8 = do
   input <- input 8
   (directions, nodeRepresentations) <- parseOrError parser input
   let graph = nodeMap nodeRepresentations
-  print "hi"
   print $ part1 directions graph
 
 part1 :: [Direction] -> NodeMap -> Int
@@ -47,15 +46,11 @@ nodeMap :: [Node] -> NodeMap
 nodeMap nodeList = nodes--getNode root
   where
     nodes = Map.fromList . map (\node -> (identifier node, node)) $ nodeList
-    -- constructNode (NodeRepresentation n l r)
-    --  | n == l && l == r = Leaf n
-    --  | otherwise = Inner n (getNode l) (getNode r)
-    -- getNode = constructNode . fromJust . (`Map.lookup` nodes)
 
 traverse :: NodeMap -> [Direction] -> Node -> [Node]
 traverse = traverseGraph []
   where
     traverseGraph path _ _ node | identifier node == "ZZZ" = path
-    traverseGraph path nodes _ leaf@(Leaf _) = path ++ [leaf]
-    traverseGraph path nodes (Left:xs) node@(Inner _ l r) = traverseGraph (path ++ [node]) nodes xs (fromJust $ Map.lookup l nodes)
-    traverseGraph path nodes (Right:xs) node@(Inner _ l r) = traverseGraph (path ++ [node]) nodes xs (fromJust $ Map.lookup r nodes)
+    traverseGraph path nodes _ leaf@(Leaf _) = leaf : path
+    traverseGraph path nodes (Left:xs) node@(Inner _ l r) = traverseGraph (node : path) nodes xs (fromJust $ Map.lookup l nodes)
+    traverseGraph path nodes (Right:xs) node@(Inner _ l r) = traverseGraph (node : path) nodes xs (fromJust $ Map.lookup r nodes)
