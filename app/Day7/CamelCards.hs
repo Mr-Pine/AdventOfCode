@@ -4,7 +4,7 @@ module Day7.CamelCards (solveDay7) where
 import Util (example, Parser, parseOrError, Prettify (prettify), input)
 import Text.Megaparsec.Char (space, char, digitChar)
 import qualified Text.Megaparsec.Char.Lexer as L
-import Text.Megaparsec (sepEndBy, count, (<|>), ErrorItem (Label))
+import Text.Megaparsec (sepEndBy, count, (<|>))
 import Data.List (sortOn, sort, group, maximumBy)
 import Data.Maybe (fromMaybe, listToMaybe)
 import Data.Function (on)

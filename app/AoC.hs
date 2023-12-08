@@ -7,6 +7,7 @@ import Day4.Scratchcards (solveDay4)
 import Day5.Fertilizer (solveDay5)
 import Day6.WaitForIt (solveDay6)
 import Day7.CamelCards (solveDay7)
+import Day8.HauntedWasteland (solveDay8)
 
 main = do
     argStrings <- getArgs
@@ -25,4 +26,4 @@ allIfEmpty [] = [1..]
 allIfEmpty x = x
 
 days :: [IO ()]
-days = [solveDay1, solveDay2, solveDay3, solveDay4, solveDay5, solveDay6, solveDay7]
+days = [solveDay1, solveDay2, solveDay3, solveDay4, solveDay5, solveDay6, solveDay7, solveDay8]

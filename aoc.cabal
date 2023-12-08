@@ -33,6 +33,7 @@ executable aoc
                  , Day5.Fertilizer
                  , Day6.WaitForIt
                  , Day7.CamelCards
+                 , Day8.HauntedWasteland
 
     -- LANGUAGE extensions used by modules in this package.
     other-extensions: NamedFieldPuns
@@ -45,5 +46,6 @@ executable aoc
                     , parallel
                     , ghc
                     , pretty-simple
+                    , containers
     hs-source-dirs:   app
     default-language: Haskell2010
