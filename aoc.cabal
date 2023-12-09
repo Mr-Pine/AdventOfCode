@@ -34,6 +34,7 @@ executable aoc
                  , Day6.WaitForIt
                  , Day7.CamelCards
                  , Day8.HauntedWasteland
+                 , Day9.MirageMaintenance
 
     -- LANGUAGE extensions used by modules in this package.
     other-extensions: NamedFieldPuns
