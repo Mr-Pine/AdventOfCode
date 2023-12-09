@@ -33,27 +33,28 @@ data Direction = L | R deriving (Show, Eq)
 data Node = Node String String String deriving (Show, Eq)
 identifier (Node n _ _) = n
 
-directionsParser :: Parser [Direction]
-directionsParser = many (L <$ char 'L' <|> R <$ char 'R')
-
 type NodeMap = Map.Map String Node
 
-parser :: Parser ([Direction], [Node])
-parser = (,) <$> directionsParser <* space <*> graphRepresentationParser
-
-graphRepresentationParser :: Parser [Node]
-graphRepresentationParser = nodeRepresentationParser `sepEndBy` space
-  where
-    nodeRepresentationParser = Node <$> identifier <* string " = (" <*> identifier <* string ", " <*> identifier <* char ')'
-    identifier = count 3 alphaNumChar :: Parser String
 
 nodeMap :: [Node] -> NodeMap
 nodeMap nodeList = nodes
   where
     nodes = Map.fromList . map (\node -> (identifier node, node)) $ nodeList
 
-nextNode nodes L (Node _ l _) = nodes Map.! l
-nextNode nodes R (Node _ _ r) = nodes Map.! r
-
 traverse :: NodeMap -> [Direction] -> Node -> [Node]
 traverse nodes (d:ds) node = node : traverse nodes ds (nextNode nodes d node)
+  where
+    nextNode nodes L (Node _ l _) = nodes Map.! l
+    nextNode nodes R (Node _ _ r) = nodes Map.! r
+
+directionsParser :: Parser [Direction]
+directionsParser = many (L <$ char 'L' <|> R <$ char 'R')
+
+parser :: Parser ([Direction], [Node])
+parser = (,) <$> directionsParser <* space <*> nodesParser
+
+nodesParser :: Parser [Node]
+nodesParser = nodeRepresentationParser `sepEndBy` space
+  where
+    nodeRepresentationParser = Node <$> identifier <* string " = (" <*> identifier <* string ", " <*> identifier <* char ')'
+    identifier = count 3 alphaNumChar :: Parser String
