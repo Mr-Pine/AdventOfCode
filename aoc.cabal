@@ -35,6 +35,8 @@ executable aoc
                  , Day7.CamelCards
                  , Day8.HauntedWasteland
                  , Day9.MirageMaintenance
+                 -- No Day 10 :(
+                 , Day11.CosmicExpansion
 
     -- LANGUAGE extensions used by modules in this package.
     other-extensions: NamedFieldPuns
