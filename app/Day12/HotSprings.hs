@@ -25,26 +25,24 @@ recordsParser = recordParser `endBy` newline
         spring = Operational <$ char '.' <|> Damaged <$ char '#' <|> Unknown <$ char '?'
         springParser = many spring
         groupParser = L.decimal `sepBy` char ','
-    
+
 countOptions :: Record -> Int
-countOptions (Record springs groups) = countRemainingOptions False springs (groups ++ [0])
+countOptions (Record springs groups) = countRemainingOptions springs groups
     where
-        --countRemainingOptions :: inGroup: Bool -> springs:[Spring] -> groups:[Int]
-        countRemainingOptions :: Bool -> [Spring] -> [Int] -> Int
-        countRemainingOptions False (Operational:xs) gs = countRemainingOptions False xs gs
-        countRemainingOptions True (Operational:xs) (0:gs) = countRemainingOptions False xs gs
-        countRemainingOptions True (Operational:xs) (_:gs) = 0
+        --countRemainingOptions :: springs:[Spring] -> groups:[Int]
+        countRemainingOptions :: [Spring] -> [Int] -> Int
+        countRemainingOptions (Operational:xs) gs = countRemainingOptions xs gs
+        countRemainingOptions (Unknown:xs) gs = countRemainingOptions (Operational:xs) gs + countRemainingOptions (Damaged:xs) gs
 
-        countRemainingOptions False (Damaged:xs) (g:gs) = countRemainingOptions True xs (g-1 : gs)
-        countRemainingOptions True (Damaged:xs) (0:gs) = 0
-        countRemainingOptions True (Damaged:xs) (g:gs) = countRemainingOptions True xs (g-1:gs)
-
-        countRemainingOptions ig (Unknown:xs) gs = countRemainingOptions ig (Operational:xs) gs + countRemainingOptions ig (Damaged:xs) gs
-
-        countRemainingOptions ig [] z 
-            | all (==0) z = 1
+        countRemainingOptions x@(Damaged:xs) y@(g:gs)
+            | noOperational && (noNext || nextNotDamaged) = countRemainingOptions (drop g xs) gs
             | otherwise = 0
+            where
+                noOperational = notElem Operational . take (g - 1) $ xs
+                noNext = length xs == g - 1
+                nextNotDamaged = length xs >= g && xs!!(g-1) /= Damaged
 
-        countRemainingOptions x y z = debugMessagePlain ("x: " ++ show x ++ " y: " ++ show y ++ " z: " ++ show z) 0
+        countRemainingOptions [] [] = 1
+        countRemainingOptions x y = 0
 
 unfold (Record springs groups) = Record (intercalate [Unknown] . replicate 5 $ springs) (concat . replicate 5 $ groups)
