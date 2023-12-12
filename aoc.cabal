@@ -35,7 +35,7 @@ executable aoc
                  , Day7.CamelCards
                  , Day8.HauntedWasteland
                  , Day9.MirageMaintenance
-                 -- No Day 10 :(
+                 , Day10.PipeMaze
                  , Day11.CosmicExpansion
 
     -- LANGUAGE extensions used by modules in this package.
@@ -50,5 +50,6 @@ executable aoc
                     , ghc
                     , pretty-simple
                     , containers
+                    , array
     hs-source-dirs:   app
     default-language: Haskell2010
