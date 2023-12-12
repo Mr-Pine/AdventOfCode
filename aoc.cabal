@@ -37,6 +37,7 @@ executable aoc
                  , Day9.MirageMaintenance
                  , Day10.PipeMaze
                  , Day11.CosmicExpansion
+                 , Day12.HotSprings
 
     -- LANGUAGE extensions used by modules in this package.
     other-extensions: NamedFieldPuns
