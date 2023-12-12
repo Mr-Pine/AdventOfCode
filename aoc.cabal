@@ -51,6 +51,8 @@ executable aoc
                     , ghc
                     , pretty-simple
                     , containers
+                    , unordered-containers
+                    , hashable
                     , array
     hs-source-dirs:   app
     default-language: Haskell2010
