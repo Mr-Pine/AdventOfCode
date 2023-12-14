@@ -40,6 +40,7 @@ executable aoc
                  , Day11.CosmicExpansion
                  , Day12.HotSprings
                  , Day13.PointOfIncidence
+                 , Day14.ParabolicReflectorDish
 
     -- LANGUAGE extensions used by modules in this package.
     other-extensions: NamedFieldPuns
