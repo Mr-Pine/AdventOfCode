@@ -14,6 +14,7 @@ import Day10.PipeMaze (solveDay10)
 import Day12.HotSprings (solveDay12)
 import Day13.PointOfIncidence (solveDay13)
 import Day14.ParabolicReflectorDish (solveDay14)
+import Day15.LensLibrary (solveDay15)
 
 main = do
     argStrings <- getArgs
@@ -32,7 +33,7 @@ allIfEmpty [] = [1..]
 allIfEmpty x = x
 
 days :: [IO ()]
-days = [solveDay1, solveDay2, solveDay3, solveDay4, solveDay5, solveDay6, solveDay7, solveDay8, solveDay9, solveDay10, solveDay11, solveDay12, solveDay13, solveDay14]
+days = [solveDay1, solveDay2, solveDay3, solveDay4, solveDay5, solveDay6, solveDay7, solveDay8, solveDay9, solveDay10, solveDay11, solveDay12, solveDay13, solveDay14, solveDay15]
 
 empty :: IO()
 empty = do

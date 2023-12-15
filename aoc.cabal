@@ -41,6 +41,7 @@ executable aoc
                  , Day12.HotSprings
                  , Day13.PointOfIncidence
                  , Day14.ParabolicReflectorDish
+                 , Day15.LensLibrary
 
     -- LANGUAGE extensions used by modules in this package.
     other-extensions: NamedFieldPuns
@@ -55,5 +56,6 @@ executable aoc
                     , pretty-simple
                     , containers
                     , array
+                    , split
     hs-source-dirs:   app
     default-language: Haskell2010
