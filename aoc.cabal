@@ -42,6 +42,7 @@ executable aoc
                  , Day13.PointOfIncidence
                  , Day14.ParabolicReflectorDish
                  , Day15.LensLibrary
+                 , Day16.TheFloorWillBeLava
 
     -- LANGUAGE extensions used by modules in this package.
     other-extensions: NamedFieldPuns
