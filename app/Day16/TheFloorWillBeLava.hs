@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedRecordDot #-}
+{-# LANGUAGE TupleSections #-}
 
 module Day16.TheFloorWillBeLava (solveDay16) where
 
@@ -15,10 +16,24 @@ solveDay16 = do
   putStrLn "Day 16 - The floor will be lava:"
   input <- input 16
   grid <- parseOrError gridParser input
-  -- print . raytrace $ grid
   print . part1 $ grid
+  print . part2 $ grid
 
-part1 = Map.size . Map.filter isEnergized . raytrace
+part1 = Map.size . Map.filter isEnergized . raytrace R (-1, 0)
+part2 grid = maximum $ map energizedForStart edges
+    where
+        energizedForStart (d, c) = Map.size . Map.filter isEnergized . raytrace d c $ grid
+
+        (_, (maxX, maxY)) = bounds grid
+        width = maxX + 1
+        height = maxY + 1
+
+        topEdge = zip (replicate width D) (map (,-1) [0..])
+        rightEdge = zip (replicate width L) (map (width,) [0..])
+        bottomEdge = zip (replicate width U) (map (,height) [0..])
+        leftEdge = zip (replicate height R) (map (-1,) [0..])
+
+        edges = topEdge ++ rightEdge ++ bottomEdge ++ leftEdge
 
 data Tile = Empty | MirrorUp | MirrorDown | SplitVertical | SplitHorizontal deriving (Show, Eq)
 
@@ -44,7 +59,7 @@ type EnergyMap = Map.Map (Int, Int) Energization
 
 data MovementDirection = R | L | U | D deriving (Show, Eq)
 
-raytrace grid = move R (-1, 0) Map.mempty
+raytrace d s grid = move d s Map.mempty
   where
     move d c@(x,y) e = case d of
           R | inRange (bounds grid) (x + 1, y) -> goRight (x + 1, y) e
