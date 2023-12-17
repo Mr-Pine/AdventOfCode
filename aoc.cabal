@@ -43,6 +43,7 @@ executable aoc
                  , Day14.ParabolicReflectorDish
                  , Day15.LensLibrary
                  , Day16.TheFloorWillBeLava
+                 , Day17.ClumsyCrucible
 
     -- LANGUAGE extensions used by modules in this package.
     other-extensions: NamedFieldPuns
@@ -59,5 +60,6 @@ executable aoc
                     , array
                     , split
                     , ordered-containers
+                    , search-algorithms
     hs-source-dirs:   app
     default-language: Haskell2010
