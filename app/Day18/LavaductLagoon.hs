@@ -4,19 +4,20 @@ import Text.Megaparsec.Char (digitChar, space, char, alphaNumChar)
 import qualified Text.Megaparsec.Char.Lexer as L
 import Data.Char (digitToInt)
 import Text.Megaparsec ((<|>), count, sepEndBy)
+import Numeric (readHex)
 
 solveDay18 = do
     putStrLn "Day 18 - Lavaduct Lagoon:"
     input <- input 18
     plan <- parseOrError planParser input
-    print plan
     print . containment $ plan
+    print . containment . map fixEncoding $ plan
 
 data Direction = U | D | L | R deriving (Show, Eq)
 data Edge = Edge {
     direction :: Direction
     , edgeLength :: Int
-    , color ::  String
+    , color ::  Int
  } deriving (Show, Eq)
 
 containment edges = area edges + 1 + totalEdgeLength edges `div` 2
@@ -40,4 +41,14 @@ edgeParser :: Parser Edge
 edgeParser = Edge <$> direction <* space <*> L.decimal <* space <*> color
     where
         direction = U <$ char 'U' <|> D <$ char 'D' <|> L <$ char 'L' <|> R <$ char 'R'
-        color = (:) <$> (char '(' *> char '#') <*> count 6 alphaNumChar <* char ')'
+        color = char '(' *> char '#' *> L.hexadecimal <* char ')'
+
+fixEncoding :: Edge -> Edge
+fixEncoding (Edge _ _ colorCode) = Edge newDirection newLength 0
+    where
+        newLength = colorCode `div` 16
+        newDirection = directionOf . (`rem` 16) $ colorCode
+        directionOf 0 = R
+        directionOf 1 = D
+        directionOf 2 = L
+        directionOf 3 = U
