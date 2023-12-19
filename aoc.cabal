@@ -45,6 +45,7 @@ executable aoc
                  , Day16.TheFloorWillBeLava
                  , Day17.ClumsyCrucible
                  , Day18.LavaductLagoon
+                 , Day19.Aplenty
 
     -- LANGUAGE extensions used by modules in this package.
     other-extensions: NamedFieldPuns
