@@ -46,6 +46,7 @@ executable aoc
                  , Day17.ClumsyCrucible
                  , Day18.LavaductLagoon
                  , Day19.Aplenty
+                 , Day20.PulsePropagation
 
     -- LANGUAGE extensions used by modules in this package.
     other-extensions: NamedFieldPuns
