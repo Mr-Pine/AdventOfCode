@@ -47,6 +47,7 @@ executable aoc
                  , Day18.LavaductLagoon
                  , Day19.Aplenty
                  , Day20.PulsePropagation
+                 , Day21.StepCounter
 
     -- LANGUAGE extensions used by modules in this package.
     other-extensions: NamedFieldPuns

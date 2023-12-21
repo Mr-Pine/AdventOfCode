@@ -20,6 +20,7 @@ import Day17.ClumsyCrucible (solveDay17)
 import Day18.LavaductLagoon (solveDay18)
 import Day19.Aplenty (solveDay19)
 import Day20.PulsePropagation (solveDay20)
+import Day21.StepCounter (solveDay21)
 
 main = do
     argStrings <- getArgs
@@ -38,7 +39,7 @@ allIfEmpty [] = [1..]
 allIfEmpty x = x
 
 days :: [IO ()]
-days = [solveDay1, solveDay2, solveDay3, solveDay4, solveDay5, solveDay6, solveDay7, solveDay8, solveDay9, solveDay10, solveDay11, solveDay12, solveDay13, solveDay14, solveDay15, solveDay16, solveDay17, solveDay18, solveDay19, solveDay20]
+days = [solveDay1, solveDay2, solveDay3, solveDay4, solveDay5, solveDay6, solveDay7, solveDay8, solveDay9, solveDay10, solveDay11, solveDay12, solveDay13, solveDay14, solveDay15, solveDay16, solveDay17, solveDay18, solveDay19, solveDay20, solveDay21]
 
 empty :: IO()
 empty = do
