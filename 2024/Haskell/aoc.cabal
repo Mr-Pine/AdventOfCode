@@ -27,6 +27,7 @@ executable aoc
 
     -- Modules included in this executable, other than Main.
     other-modules: Util
+                    , Day1.HistorianHysteria
 
     -- LANGUAGE extensions used by modules in this package.
     other-extensions: NamedFieldPuns
@@ -35,5 +36,8 @@ executable aoc
 
     build-depends:    base ^>=4.17.2.0
                     , megaparsec
+                    , text
+                    , pretty-simple
+                    , MissingH
     hs-source-dirs:   app
     default-language: Haskell2010

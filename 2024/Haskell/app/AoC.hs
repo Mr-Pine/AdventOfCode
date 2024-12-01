@@ -1,6 +1,7 @@
 import System.Environment (getArgs)
 import Data.List (intersperse)
 import Data.Maybe (listToMaybe, fromMaybe)
+import Day1.HistorianHysteria (solveDay1)
 
 main = do
     argStrings <- getArgs
@@ -21,7 +22,7 @@ allIfEmpty [] = [1..]
 allIfEmpty x = x
 
 days :: [Bool -> IO ()]
-days = []
+days = [solveDay1]
 
 empty :: Bool -> IO()
 empty _ = do
