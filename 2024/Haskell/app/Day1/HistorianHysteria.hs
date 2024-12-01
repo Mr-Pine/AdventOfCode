@@ -6,9 +6,8 @@ import Text.Megaparsec (sepEndBy)
 import Data.List (sort)
 import Data.List.Utils (countElem)
 
-solveDay1 isExample = do
+solveDay1 input = do
   putStrLn "Day 1 - Historian Hysteria:"
-  input <- (if isExample then example else input) 1
   lists <- parseOrError listParser input
   print . part1 $ lists
   print . part2 $ lists

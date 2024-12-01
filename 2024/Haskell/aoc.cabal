@@ -39,5 +39,10 @@ executable aoc
                     , text
                     , pretty-simple
                     , MissingH
+                    , advent-of-code-api
+                    , directory
+                    , containers
+                    , html-parse
+                    , ghc
     hs-source-dirs:   app
     default-language: Haskell2010
