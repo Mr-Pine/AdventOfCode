@@ -2,9 +2,12 @@ import Advent (AoCOpts (AoCOpts), AoCUserAgent (AoCUserAgent), defaultAoCOpts)
 import Data.List (intersperse)
 import Data.Maybe (fromMaybe, listToMaybe)
 import Data.Text (pack)
-import Day1.HistorianHysteria (solveDay1)
 import System.Environment (getArgs)
 import Util (example, input)
+
+import Day1.HistorianHysteria (solveDay1)
+import Day2.RedNosedReports (solveDay2)
+
 
 main = do
     argStrings <- getArgs
@@ -32,7 +35,7 @@ daysOrAll [] = [1 ..]
 daysOrAll x = x
 
 days :: [String -> IO ()]
-days = [solveDay1]
+days = [solveDay1, solveDay2]
 
 empty :: Bool -> IO ()
 empty _ = do

@@ -28,6 +28,7 @@ executable aoc
     -- Modules included in this executable, other than Main.
     other-modules: Util
                     , Day1.HistorianHysteria
+                    , Day2.RedNosedReports
 
     -- LANGUAGE extensions used by modules in this package.
     other-extensions: NamedFieldPuns
