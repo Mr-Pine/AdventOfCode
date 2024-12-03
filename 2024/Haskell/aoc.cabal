@@ -29,11 +29,13 @@ executable aoc
     other-modules: Util
                     , Day1.HistorianHysteria
                     , Day2.RedNosedReports
+                    , Day3.MullItOver
 
     -- LANGUAGE extensions used by modules in this package.
     other-extensions: NamedFieldPuns
                     , OverloadedRecordDot
                     , RecordWildCards
+                    , PartialTypeSignatures
 
     build-depends:    base ^>=4.17.2.0
                     , megaparsec

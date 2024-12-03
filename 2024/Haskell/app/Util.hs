@@ -19,6 +19,7 @@ import System.Directory (doesFileExist)
 import Text.HTML.Parser (Token (ContentText, TagOpen, TagClose), parseTokens)
 import Text.HTML.Tree (tokensToForest)
 import Text.Megaparsec (Parsec, errorBundlePretty, parse)
+import qualified Text.Megaparsec.Char.Lexer as Lexer
 
 input aocOpts day = do
     let filePath = "./input/" ++ show day ++ ".input"
@@ -68,6 +69,9 @@ isPreTag (TagClose tag) = "pre" == unpack tag
 isPreTag _ = False
 
 type Parser = Parsec Void String
+
+number :: Parser Int
+number = Lexer.decimal
 
 parseOrError :: Parser a -> String -> IO a
 parseOrError parser input = case parse parser "" input of
