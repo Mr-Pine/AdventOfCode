@@ -24,8 +24,9 @@ main = do
 
 exec (x : xs) = do
     x
+    putStrLn ""
     exec xs
-exec [] = putStrLn "\nHappy Coding!"
+exec [] = putStrLn "Happy Coding!"
 
 numberedDays = zip [1 ..] days
 
