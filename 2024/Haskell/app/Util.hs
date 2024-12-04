@@ -20,6 +20,7 @@ import Text.HTML.Parser (Token (ContentText, TagOpen, TagClose), parseTokens)
 import Text.HTML.Tree (tokensToForest)
 import Text.Megaparsec (Parsec, errorBundlePretty, parse)
 import qualified Text.Megaparsec.Char.Lexer as Lexer
+import Data.List (tails)
 
 input aocOpts day = do
     let filePath = "./input/" ++ show day ++ ".input"
@@ -53,7 +54,7 @@ getAndSaveExample aocOpts day filePath = do
     let tokens = parseTokens part1Promt
     let filteredTokens = dropWhile (not . containsExample) tokens
     let codeTokens = findCodeBlock filteredTokens
-    let text = head [ unpack text | ContentText text <- codeTokens]
+    let text = concat [ unpack text | ContentText text <- codeTokens]
 
     writeFile filePath text
     putStrLn ("Got example for Day " ++ show day)
@@ -98,3 +99,5 @@ class Prettify a where
 
 instance (Prettify a) => Prettify [a] where
     prettify = show . map prettify
+
+windows n = takeWhile ((==n) . length) . map (take n) . tails

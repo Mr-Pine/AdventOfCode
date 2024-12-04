@@ -8,6 +8,7 @@ import Util (example, input)
 import Day1.HistorianHysteria (solveDay1)
 import Day2.RedNosedReports (solveDay2)
 import Day3.MullItOver (solveDay3)
+import Day4.CeresSearch (solveDay4)
 
 
 main = do
@@ -36,7 +37,7 @@ daysOrAll [] = [1 ..]
 daysOrAll x = x
 
 days :: [String -> IO ()]
-days = [solveDay1, solveDay2, solveDay3]
+days = [solveDay1, solveDay2, solveDay3, solveDay4]
 
 empty :: Bool -> IO ()
 empty _ = do
