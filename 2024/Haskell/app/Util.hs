@@ -101,3 +101,7 @@ instance (Prettify a) => Prettify [a] where
     prettify = show . map prettify
 
 windows n = takeWhile ((==n) . length) . map (take n) . tails
+
+takeIf p x
+    | p x = Just x
+    | otherwise = Nothing

@@ -31,6 +31,7 @@ executable aoc
                     , Day2.RedNosedReports
                     , Day3.MullItOver
                     , Day4.CeresSearch
+                    , Day5.PrintQueue
 
     -- LANGUAGE extensions used by modules in this package.
     other-extensions: NamedFieldPuns
