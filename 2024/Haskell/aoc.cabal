@@ -32,6 +32,7 @@ executable aoc
                     , Day3.MullItOver
                     , Day4.CeresSearch
                     , Day5.PrintQueue
+                    , Day6.GuardGallivant
 
     -- LANGUAGE extensions used by modules in this package.
     other-extensions: NamedFieldPuns
@@ -50,5 +51,8 @@ executable aoc
                     , html-parse
                     , ghc
                     , regex-tdfa
+                    , safe
+                    , utility-ht
+                    , lens
     hs-source-dirs:   app
     default-language: Haskell2010
