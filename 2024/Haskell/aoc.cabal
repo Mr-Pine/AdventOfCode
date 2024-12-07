@@ -33,6 +33,7 @@ executable aoc
                     , Day4.CeresSearch
                     , Day5.PrintQueue
                     , Day6.GuardGallivant
+                    , Day7.BridgeRepair
 
     -- LANGUAGE extensions used by modules in this package.
     other-extensions: NamedFieldPuns

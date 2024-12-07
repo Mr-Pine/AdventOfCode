@@ -11,6 +11,7 @@ import Day3.MullItOver (solveDay3)
 import Day4.CeresSearch (solveDay4)
 import Day5.PrintQueue (solveDay5)
 import Day6.GuardGallivant (solveDay6)
+import Day7.BridgeRepair (solveDay7)
 
 
 main = do
@@ -40,7 +41,7 @@ daysOrAll [] = [1 ..]
 daysOrAll x = x
 
 days :: [String -> IO ()]
-days = [solveDay1, solveDay2, solveDay3, solveDay4, solveDay5, solveDay6]
+days = [solveDay1, solveDay2, solveDay3, solveDay4, solveDay5, solveDay6, solveDay7]
 
 empty :: Bool -> IO ()
 empty _ = do
