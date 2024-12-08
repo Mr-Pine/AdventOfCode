@@ -34,6 +34,7 @@ executable aoc
                     , Day5.PrintQueue
                     , Day6.GuardGallivant
                     , Day7.BridgeRepair
+                    , Day8.ResonantCollinearity
 
     -- LANGUAGE extensions used by modules in this package.
     other-extensions: NamedFieldPuns

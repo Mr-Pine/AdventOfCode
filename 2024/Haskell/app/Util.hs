@@ -1,6 +1,7 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE UndecidableInstances #-}
 {-# OPTIONS_GHC -Wno-deprecations #-}
+{-# LANGUAGE TupleSections #-}
 
 module Util where
 
@@ -105,3 +106,8 @@ windows n = takeWhile ((==n) . length) . map (take n) . tails
 takeIf p x
     | p x = Just x
     | otherwise = Nothing
+
+xyEnumerate :: [[a]] -> [[((Int, Int), a)]]
+xyEnumerate = zipWith (zip . flip map [0..] . flip (,)) [0..]
+
+inBounds (boundX, boundY) (x,y) = x >= 0 && x < boundX && y >= 0 && y < boundY
