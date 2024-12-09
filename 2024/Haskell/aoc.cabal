@@ -35,6 +35,7 @@ executable aoc
                     , Day6.GuardGallivant
                     , Day7.BridgeRepair
                     , Day8.ResonantCollinearity
+                    , Day9.DiskFragmenter
 
     -- LANGUAGE extensions used by modules in this package.
     other-extensions: NamedFieldPuns
