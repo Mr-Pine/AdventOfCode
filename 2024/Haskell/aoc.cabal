@@ -36,6 +36,7 @@ executable aoc
                     , Day7.BridgeRepair
                     , Day8.ResonantCollinearity
                     , Day9.DiskFragmenter
+                    , Day10.HoofIt
 
     -- LANGUAGE extensions used by modules in this package.
     other-extensions: NamedFieldPuns
@@ -51,6 +52,7 @@ executable aoc
                     , advent-of-code-api
                     , directory
                     , containers
+                    , array
                     , html-parse
                     , ghc
                     , regex-tdfa
