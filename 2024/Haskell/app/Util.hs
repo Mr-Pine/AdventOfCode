@@ -22,6 +22,7 @@ import Text.HTML.Tree (tokensToForest)
 import Text.Megaparsec (Parsec, errorBundlePretty, parse)
 import qualified Text.Megaparsec.Char.Lexer as Lexer
 import Data.List (tails)
+import Data.Array (array)
 
 input aocOpts day = do
     let filePath = "./input/" ++ show day ++ ".input"
@@ -111,3 +112,7 @@ xyEnumerate :: [[a]] -> [[((Int, Int), a)]]
 xyEnumerate = zipWith (zip . flip map [0..] . flip (,)) [0..]
 
 inBounds (boundX, boundY) (x,y) = x >= 0 && x < boundX && y >= 0 && y < boundY
+
+gridToArray grid = array ((0, 0), (subtract 1 . length . head $ xyGrid, length grid - 1)) (concat xyGrid)
+  where
+    xyGrid = xyEnumerate grid
