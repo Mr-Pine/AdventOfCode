@@ -15,6 +15,7 @@ import Day7.BridgeRepair (solveDay7)
 import Day8.ResonantCollinearity (solveDay8)
 import Day9.DiskFragmenter (solveDay9)
 import Day10.HoofIt (solveDay10)
+import Day11.PlutonianPebbles (solveDay11)
 
 
 main = do
@@ -44,7 +45,7 @@ daysOrAll [] = [1 ..]
 daysOrAll x = x
 
 days :: [String -> IO ()]
-days = [solveDay1, solveDay2, solveDay3, solveDay4, solveDay5, solveDay6, solveDay7, solveDay8, solveDay9, solveDay10]
+days = [solveDay1, solveDay2, solveDay3, solveDay4, solveDay5, solveDay6, solveDay7, solveDay8, solveDay9, solveDay10, solveDay11]
 
 empty :: Bool -> IO ()
 empty _ = do

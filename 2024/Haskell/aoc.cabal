@@ -37,6 +37,7 @@ executable aoc
                     , Day8.ResonantCollinearity
                     , Day9.DiskFragmenter
                     , Day10.HoofIt
+                    , Day11.PlutonianPebbles
 
     -- LANGUAGE extensions used by modules in this package.
     other-extensions: NamedFieldPuns
