@@ -4,7 +4,7 @@ import Data.List (transpose)
 import Text.Regex.TDFA (AllTextMatches (getAllTextMatches), (=~))
 import Util
 
-solveDay4 input = do
+solveDay4 input _ = do
     putStrLn "Day 4 - Ceres Search:"
     let inputLines = lines input
     print . part1 $ inputLines

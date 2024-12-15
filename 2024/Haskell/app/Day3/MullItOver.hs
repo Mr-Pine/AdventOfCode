@@ -8,7 +8,7 @@ import Text.Megaparsec.Char (char, newline, space, string)
 import qualified Text.Megaparsec.Char.Lexer as L
 import Util
 
-solveDay3 input = do
+solveDay3 input _ = do
     putStrLn "Day 3 - Mull It Over:"
     multiplications <- parseOrError multiplicationsParser (strip input)
     print . part1 $ multiplications

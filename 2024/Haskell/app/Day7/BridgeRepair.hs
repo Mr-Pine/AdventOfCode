@@ -5,7 +5,7 @@ import Text.Megaparsec (sepBy1, sepEndBy1)
 import Text.Megaparsec.Char (hspace, newline, string)
 import Util
 
-solveDay7 input = do
+solveDay7 input _ = do
     putStrLn "Day 7 - Bridge Repair:"
     equations <- parseOrError equationsParser input
     print . part1 $ equations

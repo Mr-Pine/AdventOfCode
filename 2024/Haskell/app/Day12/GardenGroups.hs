@@ -15,7 +15,7 @@ import GHC.Data.Maybe (orElse)
 import Util
 import qualified Data.Set as Set
 
-solveDay12 input = do
+solveDay12 input _ = do
     putStrLn "Day 12 - Garden Groups:"
     let lns = lines input
     print . part1 $ lns

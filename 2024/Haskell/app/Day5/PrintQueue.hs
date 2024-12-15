@@ -9,7 +9,7 @@ import Text.Megaparsec.Char (char, newline)
 import Util
 import Prelude
 
-solveDay5 input = do
+solveDay5 input _ = do
     putStrLn "Day 5 - Print Queue:"
     (orders, queues) <- parseOrError parser input
     print . part1 orders $ queues

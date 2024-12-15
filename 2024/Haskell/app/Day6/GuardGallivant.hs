@@ -13,7 +13,7 @@ import Text.Megaparsec.Char (char, newline)
 import Util
 import Prelude hiding (Left, Right)
 
-solveDay6 input = do
+solveDay6 input _ = do
     putStrLn "Day 6 - Guard Gallivant:"
     state <- parseOrError stateParser input
     print . part1 $ state

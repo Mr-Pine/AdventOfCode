@@ -40,6 +40,7 @@ executable aoc
                     , Day11.PlutonianPebbles
                     , Day12.GardenGroups
                     , Day13.ClawContraption
+                    , Day14.RestroomRedoubt
 
     -- LANGUAGE extensions used by modules in this package.
     other-extensions: NamedFieldPuns

@@ -11,7 +11,7 @@ import Text.Megaparsec.Char (space)
 import Util
 import Prelude hiding (lookup)
 
-solveDay11 input = do
+solveDay11 input _ = do
     putStrLn "Day 11 - Plutonian Pebbles:"
     stones <- parseOrError stonesParser input
     print . part1 $ stones

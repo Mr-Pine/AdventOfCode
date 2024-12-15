@@ -8,7 +8,7 @@ import Data.List.Utils (countElem)
 import GHC.Utils.Misc (split)
 import Data.String.Utils (strip)
 
-solveDay2 input = do
+solveDay2 input _ = do
   putStrLn "Day 2 - Red-Nosed Reports:"
   let records = map (map read . split ' ') . split '\n' . strip $ input :: [Record]
   print . part1 $ records

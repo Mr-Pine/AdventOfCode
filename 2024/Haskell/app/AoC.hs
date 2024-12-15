@@ -18,6 +18,7 @@ import Day10.HoofIt (solveDay10)
 import Day11.PlutonianPebbles (solveDay11)
 import Day12.GardenGroups (solveDay12)
 import Day13.ClawContraption (solveDay13)
+import Day14.RestroomRedoubt (solveDay14)
 
 
 main = do
@@ -28,7 +29,7 @@ main = do
     let days = filter ((`elem` requestedDays) . fst) numberedDays
     opts <- aocOpts
     let inputSupplier = (if isExample then example else input) opts
-    let daysWithArgument = map (uncurry $ supplyWithArgument inputSupplier) days
+    let daysWithArgument = map (uncurry $ supplyWithArgument inputSupplier isExample) days
     exec daysWithArgument
 
 exec (x : xs) = do
@@ -39,15 +40,15 @@ exec [] = putStrLn "Happy Coding!"
 
 numberedDays = zip [1 ..] days
 
-supplyWithArgument inputSupplier day solver = do
+supplyWithArgument inputSupplier isExample day solver = do
     input <- inputSupplier day
-    solver input
+    solver input isExample
 
 daysOrAll [] = [1 ..]
 daysOrAll x = x
 
-days :: [String -> IO ()]
-days = [solveDay1, solveDay2, solveDay3, solveDay4, solveDay5, solveDay6, solveDay7, solveDay8, solveDay9, solveDay10, solveDay11, solveDay12, solveDay13]
+days :: [String -> Bool -> IO ()]
+days = [solveDay1, solveDay2, solveDay3, solveDay4, solveDay5, solveDay6, solveDay7, solveDay8, solveDay9, solveDay10, solveDay11, solveDay12, solveDay13, solveDay14]
 
 empty :: Bool -> IO ()
 empty _ = do

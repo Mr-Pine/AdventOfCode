@@ -6,7 +6,7 @@ import Data.List (nub, tails)
 import Data.String.Utils (strip)
 import Util
 
-solveDay8 input = do
+solveDay8 input _ = do
     putStrLn "Day 8 - Resonant Collinearity:"
     print . part1 $ input
     print . part2 $ input

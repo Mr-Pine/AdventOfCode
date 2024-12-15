@@ -6,7 +6,7 @@ import Data.String.Utils (strip)
 import Util
 import Data.List (nub)
 
-solveDay10 input = do
+solveDay10 input _ = do
     putStrLn "Day 10 - Hoof It:"
     let array = graphArray input
     let startPoints = startingPoints array

@@ -5,7 +5,7 @@ import Text.Megaparsec (anySingle, sepEndBy1)
 import Text.Megaparsec.Char (space, string)
 import Util
 
-solveDay13 input = do
+solveDay13 input _ = do
     putStrLn "Day 13 - Claw Contraption:"
     arcade <- parseOrError arcadeParser input
     print . part1 $ arcade

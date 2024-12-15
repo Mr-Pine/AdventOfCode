@@ -23,6 +23,7 @@ import Text.Megaparsec (Parsec, errorBundlePretty, parse)
 import qualified Text.Megaparsec.Char.Lexer as Lexer
 import Data.List (tails)
 import Data.Array (array)
+import Text.Megaparsec.Char (space)
 
 input aocOpts day = do
     let filePath = "./input/" ++ show day ++ ".input"
@@ -74,7 +75,7 @@ isPreTag _ = False
 type Parser = Parsec Void String
 
 number :: Parser Int
-number = Lexer.decimal
+number = Lexer.signed space Lexer.decimal
 
 parseOrError :: Parser a -> String -> IO a
 parseOrError parser input = case parse parser "" input of

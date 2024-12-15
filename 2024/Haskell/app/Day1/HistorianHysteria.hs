@@ -6,7 +6,7 @@ import Text.Megaparsec (sepEndBy)
 import Data.List (sort)
 import Data.List.Utils (countElem)
 
-solveDay1 input = do
+solveDay1 input _ = do
   putStrLn "Day 1 - Historian Hysteria:"
   lists <- parseOrError listParser input
   print . part1 $ lists

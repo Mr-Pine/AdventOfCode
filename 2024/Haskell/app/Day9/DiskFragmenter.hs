@@ -9,7 +9,7 @@ import Control.Applicative ((<|>))
 import Data.Tuple.HT (mapSnd)
 import Data.Maybe (catMaybes)
 
-solveDay9 input = do
+solveDay9 input _ = do
     putStrLn "Day 9 - Disk Fragmenter"
     files <- parseOrError parseDisk (strip input)
     print . part1 $ files
