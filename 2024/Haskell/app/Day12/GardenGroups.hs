@@ -12,7 +12,7 @@ import Data.Maybe (fromJust, isJust)
 import Data.Set (Set, fromList, member, notMember)
 import Data.Tuple.HT (mapSnd)
 import GHC.Data.Maybe (orElse)
-import Util
+import Util hiding (Left, Right)
 import qualified Data.Set as Set
 
 solveDay12 input _ = do

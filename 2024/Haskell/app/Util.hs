@@ -24,6 +24,8 @@ import qualified Text.Megaparsec.Char.Lexer as Lexer
 import Data.List (tails)
 import Data.Array (array)
 import Text.Megaparsec.Char (space)
+import Prelude hiding (Right, Left)
+import qualified Data.Either as Either
 
 input aocOpts day = do
     let filePath = "./input/" ++ show day ++ ".input"
@@ -79,10 +81,10 @@ number = Lexer.signed space Lexer.decimal
 
 parseOrError :: Parser a -> String -> IO a
 parseOrError parser input = case parse parser "" input of
-    Left err -> do
+    Either.Left err -> do
         putStrLn $ errorBundlePretty err
         error "Parsing failed :("
-    Right value -> pure value
+    Either.Right value -> pure value
 
 debug :: (Prettify a) => a -> a
 debug = debugMessage ""
@@ -117,3 +119,10 @@ inBounds (boundX, boundY) (x,y) = x >= 0 && x < boundX && y >= 0 && y < boundY
 gridToArray grid = array ((0, 0), (subtract 1 . length . head $ xyGrid, length grid - 1)) (concat xyGrid)
   where
     xyGrid = xyEnumerate grid
+
+data Direction = Up | Down | Left | Right deriving (Eq, Show, Ord)
+
+moveInDirection Up (x,y) = (x,y-1)
+moveInDirection Down (x,y) = (x,y+1)
+moveInDirection Left (x,y) = (x-1,y)
+moveInDirection Right (x,y) = (x+1,y)

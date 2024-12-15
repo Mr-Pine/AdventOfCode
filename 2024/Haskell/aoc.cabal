@@ -41,6 +41,7 @@ executable aoc
                     , Day12.GardenGroups
                     , Day13.ClawContraption
                     , Day14.RestroomRedoubt
+                    , Day15.WarehouseWoes
 
     -- LANGUAGE extensions used by modules in this package.
     other-extensions: NamedFieldPuns

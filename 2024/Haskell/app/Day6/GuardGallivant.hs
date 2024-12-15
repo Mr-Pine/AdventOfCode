@@ -40,16 +40,10 @@ toChar Free = '.'
 toChar Obstacle = '#'
 toChar Visited = 'X'
 
-data Direction = Up | Left | Down | Right deriving (Eq, Show, Ord)
 turnDirectionRight Up = Right
 turnDirectionRight Right = Down
 turnDirectionRight Down = Left
 turnDirectionRight Left = Up
-
-moveInDirection Up (x, y) = (x, y - 1)
-moveInDirection Left (x, y) = (x - 1, y)
-moveInDirection Down (x, y) = (x, y + 1)
-moveInDirection Right (x, y) = (x + 1, y)
 
 data State = State Position (Int, Int) Direction (Set (Position, Direction)) (Set Position) deriving (Eq, Show)
 board (State _ _ _ _ b) = b
