@@ -42,6 +42,7 @@ executable aoc
                     , Day13.ClawContraption
                     , Day14.RestroomRedoubt
                     , Day15.WarehouseWoes
+                    , Day16.ReindeerMaze
 
     -- LANGUAGE extensions used by modules in this package.
     other-extensions: NamedFieldPuns
@@ -64,5 +65,7 @@ executable aoc
                     , safe
                     , utility-ht
                     , lens
+                    , psqueues
+                    , hashable
     hs-source-dirs:   app
     default-language: Haskell2010

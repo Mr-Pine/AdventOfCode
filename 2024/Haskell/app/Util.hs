@@ -2,6 +2,7 @@
 {-# LANGUAGE UndecidableInstances #-}
 {-# OPTIONS_GHC -Wno-deprecations #-}
 {-# LANGUAGE TupleSections #-}
+{-# LANGUAGE DeriveGeneric #-}
 
 module Util where
 
@@ -26,6 +27,8 @@ import Data.Array (array)
 import Text.Megaparsec.Char (space)
 import Prelude hiding (Right, Left)
 import qualified Data.Either as Either
+import Data.Hashable (Hashable)
+import GHC.Generics (Generic)
 
 input aocOpts day = do
     let filePath = "./input/" ++ show day ++ ".input"
@@ -120,9 +123,21 @@ gridToArray grid = array ((0, 0), (subtract 1 . length . head $ xyGrid, length g
   where
     xyGrid = xyEnumerate grid
 
-data Direction = Up | Down | Left | Right deriving (Eq, Show, Ord)
+data Direction = Up | Down | Left | Right deriving (Eq, Show, Ord, Enum, Generic)
+
+instance Hashable Direction
 
 moveInDirection Up (x,y) = (x,y-1)
 moveInDirection Down (x,y) = (x,y+1)
 moveInDirection Left (x,y) = (x-1,y)
 moveInDirection Right (x,y) = (x+1,y)
+
+rotateClockwise Up = Right
+rotateClockwise Down = Left
+rotateClockwise Right = Down
+rotateClockwise Left = Up
+
+rotateCounterClockwise Up = Left
+rotateCounterClockwise Down = Right
+rotateCounterClockwise Right = Up
+rotateCounterClockwise Left = Down
