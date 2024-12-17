@@ -43,6 +43,7 @@ executable aoc
                     , Day14.RestroomRedoubt
                     , Day15.WarehouseWoes
                     , Day16.ReindeerMaze
+                    , Day17.ChronospatialComputer
 
     -- LANGUAGE extensions used by modules in this package.
     other-extensions: NamedFieldPuns
@@ -67,5 +68,6 @@ executable aoc
                     , lens
                     , psqueues
                     , hashable
+                    , mtl
     hs-source-dirs:   app
     default-language: Haskell2010
