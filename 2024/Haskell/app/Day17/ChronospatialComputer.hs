@@ -1,5 +1,3 @@
-{-# LANGUAGE NamedFieldPuns #-}
-
 module Day17.ChronospatialComputer (solveDay17) where
 
 import Control.Monad.State (MonadState (get, put), State, evalState, gets, modify, runState)
@@ -16,10 +14,7 @@ solveDay17 input _ = do
     computer <- parseOrError computerParser input
     programBytes <- parseOrError programParser input
     print . part1 $ computer
-    --print programBytes
-    -- print . map (reverse . take (length [3,0]) . reverse . (\n -> evalState (evalWithA n) computer)) . map ((8 * 7) +) $ [0..7]
     print $ part2 programBytes computer
-    --print $ map (\n -> evalState (evalWithA (n + 8 * (0 + 8 * (3 + 8 * (5 + 8 * (4 + 8 * 5)))))) computer) [1 .. 8]
 
 part1 = intercalate "," . map show . evalState eval
 
