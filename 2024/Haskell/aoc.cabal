@@ -44,6 +44,7 @@ executable aoc
                     , Day15.WarehouseWoes
                     , Day16.ReindeerMaze
                     , Day17.ChronospatialComputer
+                    , Day18.RamRun
 
     -- LANGUAGE extensions used by modules in this package.
     other-extensions: NamedFieldPuns

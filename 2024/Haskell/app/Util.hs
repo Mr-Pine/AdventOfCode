@@ -125,6 +125,8 @@ gridToArray grid = array ((0, 0), (subtract 1 . length . head $ xyGrid, length g
 
 data Direction = Up | Down | Left | Right deriving (Eq, Show, Ord, Enum, Generic)
 
+directions = [Up, Down, Left, Right]
+
 instance Hashable Direction
 
 moveInDirection Up (x,y) = (x,y-1)
