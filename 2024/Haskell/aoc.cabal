@@ -46,6 +46,7 @@ executable aoc
                     , Day17.ChronospatialComputer
                     , Day18.RamRun
                     , Day19.LinenLayout
+                    , Day20.RaceCondition
 
     -- LANGUAGE extensions used by modules in this package.
     other-extensions: NamedFieldPuns

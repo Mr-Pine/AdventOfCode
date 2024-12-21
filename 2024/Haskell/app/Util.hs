@@ -1,34 +1,40 @@
+{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE TupleSections #-}
 {-# LANGUAGE UndecidableInstances #-}
 {-# OPTIONS_GHC -Wno-deprecations #-}
-{-# LANGUAGE TupleSections #-}
-{-# LANGUAGE DeriveGeneric #-}
 
 module Util where
 
 import Advent (AoC (AoCInput, AoCPrompt), Part (Part1), mkDay, mkDay_, runAoC_)
+import Control.Applicative ((<|>))
+import Data.Array (array)
 import Data.Either (fromRight)
-import Data.Map ((!))
+import qualified Data.Either as Either
+import Data.HashPSQ (minView)
+import qualified Data.HashPSQ as HashPSQ
+import Data.Hashable (Hashable)
+import Data.List (tails)
+import Data.Map (Map, (!))
+import qualified Data.Map as Map
 import Data.Maybe (mapMaybe)
+import qualified Data.Set as Set
 import Data.Text (Text, unpack)
 import Data.Tree (Tree (Node), foldTree)
+import Data.Tuple.HT (mapFst)
 import Data.Void (Void)
 import Debug.Pretty.Simple (pTrace, pTraceWith)
 import Debug.Trace (trace)
+import GHC.Generics (Generic)
 import GHC.RTS.Flags (RTSFlags (debugFlags))
 import GHC.SysTools (isContainedIn)
 import System.Directory (doesFileExist)
-import Text.HTML.Parser (Token (ContentText, TagOpen, TagClose), parseTokens)
+import Text.HTML.Parser (Token (ContentText, TagClose, TagOpen), parseTokens)
 import Text.HTML.Tree (tokensToForest)
 import Text.Megaparsec (Parsec, errorBundlePretty, parse)
-import qualified Text.Megaparsec.Char.Lexer as Lexer
-import Data.List (tails)
-import Data.Array (array)
 import Text.Megaparsec.Char (space)
-import Prelude hiding (Right, Left)
-import qualified Data.Either as Either
-import Data.Hashable (Hashable)
-import GHC.Generics (Generic)
+import qualified Text.Megaparsec.Char.Lexer as Lexer
+import Prelude hiding (Left, Right)
 
 input aocOpts day = do
     let filePath = "./input/" ++ show day ++ ".input"
@@ -62,7 +68,7 @@ getAndSaveExample aocOpts day filePath = do
     let tokens = parseTokens part1Promt
     let filteredTokens = dropWhile (not . containsExample) tokens
     let codeTokens = findCodeBlock filteredTokens
-    let text = concat [ unpack text | ContentText text <- codeTokens]
+    let text = concat [unpack text | ContentText text <- codeTokens]
 
     writeFile filePath text
     putStrLn ("Got example for Day " ++ show day)
@@ -108,20 +114,22 @@ class Prettify a where
 instance (Prettify a) => Prettify [a] where
     prettify = show . map prettify
 
-windows n = takeWhile ((==n) . length) . map (take n) . tails
+windows n = takeWhile ((== n) . length) . map (take n) . tails
 
 takeIf p x
     | p x = Just x
     | otherwise = Nothing
 
 xyEnumerate :: [[a]] -> [[((Int, Int), a)]]
-xyEnumerate = zipWith (zip . flip map [0..] . flip (,)) [0..]
+xyEnumerate = zipWith (zip . flip map [0 ..] . flip (,)) [0 ..]
 
-inBounds (boundX, boundY) (x,y) = x >= 0 && x < boundX && y >= 0 && y < boundY
+inBounds (boundX, boundY) (x, y) = x >= 0 && x < boundX && y >= 0 && y < boundY
 
 gridToArray grid = array ((0, 0), (subtract 1 . length . head $ xyGrid, length grid - 1)) (concat xyGrid)
   where
     xyGrid = xyEnumerate grid
+
+-- Direction
 
 data Direction = Up | Down | Left | Right deriving (Eq, Show, Ord, Enum, Generic)
 
@@ -129,10 +137,10 @@ directions = [Up, Down, Left, Right]
 
 instance Hashable Direction
 
-moveInDirection Up (x,y) = (x,y-1)
-moveInDirection Down (x,y) = (x,y+1)
-moveInDirection Left (x,y) = (x-1,y)
-moveInDirection Right (x,y) = (x+1,y)
+moveInDirection Up (x, y) = (x, y - 1)
+moveInDirection Down (x, y) = (x, y + 1)
+moveInDirection Left (x, y) = (x - 1, y)
+moveInDirection Right (x, y) = (x + 1, y)
 
 rotateClockwise Up = Right
 rotateClockwise Down = Left
@@ -143,3 +151,33 @@ rotateCounterClockwise Up = Left
 rotateCounterClockwise Down = Right
 rotateCounterClockwise Right = Up
 rotateCounterClockwise Left = Down
+
+-- Dijkstra
+
+dijkstra :: (Eq pos, Hashable pos, Ord pos) => (pos -> [(Int, pos)]) -> pos -> pos -> (Int, Map pos [pos])
+dijkstra neighbourGen start end = findPath (HashPSQ.singleton start 0 ()) Set.empty Map.empty
+  where
+    findPath prioQueue processed predecessors
+        | pos == end = (distance, predecessors)
+        | otherwise = findPath updatedPrioQueue (pos `Set.insert` processed) updatedPredecessors
+      where
+        Just (pos, distance, (), remaining) = minView prioQueue
+
+        (updatedPrioQueue, updatedPredecessors) = foldr (updateNeighbour . mapFst (+ distance)) (remaining, predecessors) . filter (not . (`Set.member` processed) . snd) . neighbourGen $ pos
+        updateNeighbour (newDistance, newPosition) (prioQueue, predecessorMap) = (updatedPrioQueue, updatedPredecessorMap)
+          where
+            oldDistance = fst <$> newPosition `HashPSQ.lookup` prioQueue
+            minDistance = maybe newDistance (min newDistance) oldDistance
+
+            updatedPrioQueue = snd $ HashPSQ.alter (const ((), Just (minDistance, ()))) newPosition prioQueue
+            updatedPredecessorMap = case compare newDistance <$> oldDistance of
+                Just GT -> predecessorMap
+                Just EQ -> Map.alter ((pos :) <$>) newPosition predecessorMap
+                Just LT -> Map.insert newPosition [pos] predecessorMap
+                Nothing -> Map.alter ((<|> Just [pos]) . (id <$>)) newPosition predecessorMap
+
+
+findAllOnShortestPath end predecessors = walkPredecessors [end] Set.empty
+    where 
+        walkPredecessors [] visited = visited
+        walkPredecessors (p : ps) visited = walkPredecessors (maybe [] (filter (not . (`Set.member` visited))) (predecessors Map.!? p) ++ ps) (p `Set.insert` visited)
