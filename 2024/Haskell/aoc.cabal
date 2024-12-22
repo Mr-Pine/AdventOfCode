@@ -47,6 +47,7 @@ executable aoc
                     , Day18.RamRun
                     , Day19.LinenLayout
                     , Day20.RaceCondition
+                    , Day21.KeypadConundrum
 
     -- LANGUAGE extensions used by modules in this package.
     other-extensions: NamedFieldPuns

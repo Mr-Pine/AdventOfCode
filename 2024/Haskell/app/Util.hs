@@ -14,7 +14,7 @@ import qualified Data.Either as Either
 import Data.HashPSQ (minView)
 import qualified Data.HashPSQ as HashPSQ
 import Data.Hashable (Hashable)
-import Data.List (tails)
+import Data.List (tails, minimumBy)
 import Data.Map (Map, (!))
 import qualified Data.Map as Map
 import Data.Maybe (mapMaybe)
@@ -35,6 +35,7 @@ import Text.Megaparsec (Parsec, errorBundlePretty, parse)
 import Text.Megaparsec.Char (space)
 import qualified Text.Megaparsec.Char.Lexer as Lexer
 import Prelude hiding (Left, Right)
+import Control.Monad (liftM2)
 
 input aocOpts day = do
     let filePath = "./input/" ++ show day ++ ".input"
@@ -181,3 +182,12 @@ findAllOnShortestPath end predecessors = walkPredecessors [end] Set.empty
     where 
         walkPredecessors [] visited = visited
         walkPredecessors (p : ps) visited = walkPredecessors (maybe [] (filter (not . (`Set.member` visited))) (predecessors Map.!? p) ++ ps) (p `Set.insert` visited)
+
+-- Dealing with minimums
+
+keepMinsWith f xs = filter ((== minF xs) . f) xs
+    where
+        minF = minimum . map f
+
+minimumWith f = minimumBy (\a b -> compare (f a) (f b))
+
