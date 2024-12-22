@@ -48,6 +48,7 @@ executable aoc
                     , Day19.LinenLayout
                     , Day20.RaceCondition
                     , Day21.KeypadConundrum
+                    , Day22.MonkeyMarket
 
     -- LANGUAGE extensions used by modules in this package.
     other-extensions: NamedFieldPuns
