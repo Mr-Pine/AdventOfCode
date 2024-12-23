@@ -21,7 +21,7 @@ import Data.Maybe (mapMaybe)
 import qualified Data.Set as Set
 import Data.Text (Text, unpack)
 import Data.Tree (Tree (Node), foldTree)
-import Data.Tuple.HT (mapFst)
+import Data.Tuple.HT (mapFst, mapSnd)
 import Data.Void (Void)
 import Debug.Pretty.Simple (pTrace, pTraceWith)
 import Debug.Trace (trace)
@@ -191,3 +191,6 @@ keepMinsWith f xs = filter ((== minF xs) . f) xs
 
 minimumWith f = minimumBy (\a b -> compare (f a) (f b))
 
+-- Tuple map
+
+tmap f = mapFst f . mapSnd f
