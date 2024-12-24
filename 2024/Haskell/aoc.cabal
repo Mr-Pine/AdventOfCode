@@ -50,6 +50,7 @@ executable aoc
                     , Day21.KeypadConundrum
                     , Day22.MonkeyMarket
                     , Day23.LanParty
+                    , Day24.CrossedWires
 
     -- LANGUAGE extensions used by modules in this package.
     other-extensions: NamedFieldPuns

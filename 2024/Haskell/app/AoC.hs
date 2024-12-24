@@ -28,6 +28,7 @@ import Day20.RaceCondition (solveDay20)
 import Day21.KeypadConundrum (solveDay21)
 import Day22.MonkeyMarket (solveDay22)
 import Day23.LanParty (solveDay23)
+import Day24.CrossedWires (solveDay24)
 
 
 main = do
@@ -57,7 +58,7 @@ daysOrAll [] = [1 ..]
 daysOrAll x = x
 
 days :: [String -> Bool -> IO ()]
-days = [solveDay1, solveDay2, solveDay3, solveDay4, solveDay5, solveDay6, solveDay7, solveDay8, solveDay9, solveDay10, solveDay11, solveDay12, solveDay13, solveDay14, solveDay15, solveDay16, solveDay17, solveDay18, solveDay19, solveDay20, solveDay21, solveDay22, solveDay23]
+days = [solveDay1, solveDay2, solveDay3, solveDay4, solveDay5, solveDay6, solveDay7, solveDay8, solveDay9, solveDay10, solveDay11, solveDay12, solveDay13, solveDay14, solveDay15, solveDay16, solveDay17, solveDay18, solveDay19, solveDay20, solveDay21, solveDay22, solveDay23, solveDay24]
 
 empty :: Bool -> IO ()
 empty _ = do
