@@ -191,6 +191,8 @@ keepMinsWith f xs = filter ((== minF xs) . f) xs
 
 minimumWith f = minimumBy (\a b -> compare (f a) (f b))
 
--- Tuple map
+-- Tuple ops
 
 tmap f = mapFst f . mapSnd f
+
+tupleToList = uncurry . flip $ (flip (:) . (:[]))
