@@ -1,0 +1,3 @@
+[submodule "granule"]
+	path = 2025/Granule/granule-lang
+	url = git@github.com:granule-project/granule.git

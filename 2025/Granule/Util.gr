@@ -1,0 +1,16 @@
+import Std.Maybe
+import Std.List
+
+listSnoc : forall {a: Type} . List a -> a -> List a
+listSnoc elem list = append_list list (singleton_list elem)
+
+splitLines : String -> List String
+splitLines s = splitLines' s "" Empty
+
+splitLines' : String -> String -> List String -> List String
+splitLines' s buf res = let
+    unconsed = stringUncons s;
+    process Nothing = listSnoc res buf;
+    process (Just (c, s')) = if (c == '\n') then splitLines' s' "" (listSnoc res buf) else splitLines' s' (stringSnoc buf c) res
+    in
+    process unconsed
