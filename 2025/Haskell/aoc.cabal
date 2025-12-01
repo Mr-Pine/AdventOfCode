@@ -1,0 +1,58 @@
+cabal-version:      3.8
+name:               aoc
+version:            0.1.0.0
+
+-- A short (one-line) description of the package.
+-- synopsis:
+
+-- A longer description of the package.
+-- description:
+
+-- A URL where users can report bugs.
+-- bug-reports:
+
+-- The license under which the package is released.
+-- license:
+author:             Mr-Pine
+maintainer:         git@mr-pine.de
+
+-- A copyright notice.
+-- copyright:
+-- category:
+extra-source-files: CHANGELOG.md
+
+executable aoc
+    main-is:          AoC.hs
+    ghc-options:    -rtsopts=all
+
+    -- Modules included in this executable, other than Main.
+    other-modules: Util
+                    , Day1.SecretEntrance
+
+
+    -- LANGUAGE extensions used by modules in this package.
+    other-extensions: NamedFieldPuns
+                    , OverloadedRecordDot
+                    , RecordWildCards
+                    , PartialTypeSignatures
+
+    build-depends:    base ^>=4.21.0.0
+                    , megaparsec
+                    , text
+                    , pretty-simple
+                    , MissingH
+                    , advent-of-code-api
+                    , directory
+                    , containers
+                    , array
+                    , html-parse
+                    , ghc
+                    , regex-tdfa
+                    , safe
+                    , utility-ht
+                    , lens
+                    , psqueues
+                    , hashable
+                    , mtl
+    hs-source-dirs:   app
+    default-language: Haskell2010

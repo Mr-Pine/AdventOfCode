@@ -1,0 +1,46 @@
+import Advent (AoCOpts (AoCOpts), AoCUserAgent (AoCUserAgent), defaultAoCOpts)
+import Data.List (intersperse)
+import Data.Maybe (fromMaybe, listToMaybe)
+import Data.Text (pack)
+import System.Environment (getArgs)
+import Util (example, input)
+
+import Day1.SecretEntrance (solveDay1)
+
+main = do
+    argStrings <- getArgs
+    let isExample = ((Just "example" ==) . listToMaybe) argStrings
+    let strippedArgsStrings = if isExample then tail argStrings else argStrings
+    let requestedDays = daysOrAll $ map read strippedArgsStrings
+    let days = filter ((`elem` requestedDays) . fst) numberedDays
+    opts <- aocOpts
+    let inputSupplier = (if isExample then example else input) opts
+    let daysWithArgument = map (uncurry $ supplyWithArgument inputSupplier isExample) days
+    exec daysWithArgument
+
+exec (x : xs) = do
+    x
+    putStrLn ""
+    exec xs
+exec [] = putStrLn "Happy Coding!"
+
+numberedDays = zip [1 ..] days
+
+supplyWithArgument inputSupplier isExample day solver = do
+    input <- inputSupplier day
+    solver input isExample
+
+daysOrAll [] = [1 ..]
+daysOrAll x = x
+
+days :: [String -> Bool -> IO ()]
+days = [solveDay1]
+
+empty :: Bool -> IO ()
+empty _ = do
+    print "Nothing for this day :("
+
+aocOpts = do
+    sessionKey <- readFile ".sessionKey"
+    let userAgent = AoCUserAgent (pack "https://github.com/Mr-Pine/AdventOfCode/tree/master/2025/Haskell") (pack "git@mr-pine.de using https://hackage.haskell.org/package/advent-of-code-api")
+    return $ defaultAoCOpts userAgent 2025 sessionKey
