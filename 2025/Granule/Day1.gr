@@ -1,6 +1,8 @@
--- Example expression
+import List
+import Util
 
--- import Std.List
-
-main : Int
-main = (λx → λy → x * y) 3 5
+main : ((List String)) <{Open,Read,IOExcept,Close}>
+main =
+    let 
+      [a] <- readInputLines "../Haskell/input/1.example" in
+      pure (append_list a a)
