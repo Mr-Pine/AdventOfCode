@@ -1,6 +1,11 @@
+{-# LANGUAGE DuplicateRecordFields #-}
+
 module Day2.GiftShop (solveDay2) where
 
+import Data.List.Utils (uniq)
+import Data.Maybe (fromMaybe)
 import GHC.Num (integerLogBase)
+import Safe (headMay)
 import Text.Megaparsec (MonadParsec (eof), sepBy, sepBy1)
 import Text.Megaparsec.Char (char, newline)
 import qualified Text.Megaparsec.Char.Lexer as Lex
@@ -10,38 +15,53 @@ solveDay2 input _ = do
     putStrLn "Day 2 - Secret Entrance:"
     ids <- parseOrError idsParser input
     print . part1 $ ids
+    print . part2 $ ids
 
 data Id = Id {lower :: Integer, upper :: Integer} deriving (Show, Eq)
 
-part1 = sum . map dupValue . concatMap validHalfs -- sum . concatMap invalidIds
+data IdData = IdData {lower :: Integer, upper :: Integer, lowerDigitCount :: Word, upperDigitCount :: Word} deriving (Show)
 
--- invalidIds ids = filterRange ids . halfRanges $ ids
+populate (Id lower upper) = IdData lower upper (digitCount lower) (digitCount upper)
 
-validHalfs idRange@(Id lower upper) = filterPossible idRange possibleHalfs
+part1 = sum . nPartsInvalid 2 . map populate
+part2 idRanges = sum . uniq . concatMap partSums $ [2 .. maxN]
   where
-    minDigitCount = (digitCount lower + 1) `div` 2 * 2 -- rounding up lower bound digit count to even
+    partSums n = nPartsInvalid n populated
+    populated = map populate idRanges
+    maxN = maximum . map upperDigitCount $ populated
+
+nPartsInvalid n = map (replValue n) . concatMap (validParts n)
+
+validParts n idRange@(IdData lower upper lowerDigitCount upperDigitCount) = filterPossible n idRange possibleParts
+  where
+    minDigitCount = (lowerDigitCount + (n - 1)) `div` n * n -- rounding up lower bound digit count to even
     minDigitValue = intExp 10 (minDigitCount - 1)
-    maxDigitCount = digitCount upper `div` 2 * 2 -- rounding down lower bound digit count to even
+    maxDigitCount = upperDigitCount `div` n * n -- rounding down lower bound digit count to even
     maxDigitValue = intExp 10 maxDigitCount - 1
 
-    highRange = (fst (halfDigits (max lower minDigitValue)), fst (halfDigits (min upper maxDigitValue)))
+    highRange = (head (digitParts n (max lower minDigitValue)), fromMaybe 0 $ headMay (digitParts n (min upper maxDigitValue)))
 
-    possibleHalfs = [fst highRange .. snd highRange]
+    possibleParts = [fst highRange .. snd highRange]
 
-filterPossible (Id lower upper) xs | length xs <= 2 = filter (invalidId . dupValue) xs
-    where
-        invalidId x = x `elem` [lower..upper]
-filterPossible idRange (x:xs) = init xs ++ filterPossible idRange [x, last xs]
-
-dupValue x = intExp 10 (digitCount x) * x + x
-
-halfDigits x = (x `div` digitMask, x `mod` digitMask)
+filterPossible n (IdData lower upper _ _) xs | length xs <= 2 = filter (invalidId . replValue n) xs
   where
-    digitMask = intExp 10 (digitCount x `div` 2)
+    invalidId x = x `elem` [lower .. upper]
+filterPossible n idRange (x : xs) = init xs ++ filterPossible n idRange [x, last xs]
 
-digitCount = (+1) . integerLogBase 10
+replValue n x = replValue' (intExp 10 (digitCount x)) n x
+  where
+    replValue' _ 1 x = x
+    replValue' m n x = m * replValue' m (n - 1) x + x
 
-intExp base n = foldr (const (*base)) 1 [1..n]
+digitParts n x = reverse . digitParts' $ x
+  where
+    digitMask = intExp 10 (digitCount x `div` n)
+    digitParts' 0 = []
+    digitParts' x = (x `mod` digitMask) : digitParts' (x `div` digitMask)
+
+digitCount = (+ 1) . integerLogBase 10
+
+intExp base n = foldr (const (* base)) 1 [1 .. n]
 
 idsParser :: Parser [Id]
 idsParser = idParser `sepBy1` char ',' <* newline <* eof
