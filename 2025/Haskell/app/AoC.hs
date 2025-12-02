@@ -6,6 +6,7 @@ import System.Environment (getArgs)
 import Util (example, input)
 
 import Day1.SecretEntrance (solveDay1)
+import Day2.GiftShop (solveDay2)
 
 main = do
     argStrings <- getArgs
@@ -34,7 +35,7 @@ daysOrAll [] = [1 ..]
 daysOrAll x = x
 
 days :: [String -> Bool -> IO ()]
-days = [solveDay1]
+days = [solveDay1, solveDay2]
 
 empty :: Bool -> IO ()
 empty _ = do
