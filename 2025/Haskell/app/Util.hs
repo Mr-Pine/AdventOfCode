@@ -36,6 +36,7 @@ import Text.Megaparsec.Char (space)
 import qualified Text.Megaparsec.Char.Lexer as Lexer
 import Prelude hiding (Left, Right)
 import Control.Monad (liftM2)
+import GHC.Utils.Misc (nTimes)
 
 input aocOpts day = do
     let filePath = "./input/" ++ show day ++ ".input"
@@ -196,3 +197,6 @@ minimumWith f = minimumBy (\a b -> compare (f a) (f b))
 tmap f = mapFst f . mapSnd f
 
 tupleToList = uncurry . flip $ (flip (:) . (:[]))
+
+-- List ops
+dropLast n = nTimes n init
