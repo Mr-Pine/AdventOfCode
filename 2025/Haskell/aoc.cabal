@@ -29,6 +29,7 @@ executable aoc
     other-modules: Util
                     , Day1.SecretEntrance
                     , Day2.GiftShop
+                    , Day3.Lobby
 
 
     -- LANGUAGE extensions used by modules in this package.
