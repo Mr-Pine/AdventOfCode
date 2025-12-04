@@ -30,6 +30,7 @@ executable aoc
                     , Day1.SecretEntrance
                     , Day2.GiftShop
                     , Day3.Lobby
+                    , Day4.PrintingDepartment
 
 
     -- LANGUAGE extensions used by modules in this package.
