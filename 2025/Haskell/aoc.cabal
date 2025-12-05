@@ -31,6 +31,7 @@ executable aoc
                     , Day2.GiftShop
                     , Day3.Lobby
                     , Day4.PrintingDepartment
+                    , Day5.Cafeteria
 
 
     -- LANGUAGE extensions used by modules in this package.
