@@ -58,5 +58,6 @@ executable aoc
                     , psqueues
                     , hashable
                     , mtl
+                    , range
     hs-source-dirs:   app
     default-language: Haskell2010
