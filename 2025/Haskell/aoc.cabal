@@ -32,6 +32,7 @@ executable aoc
                     , Day3.Lobby
                     , Day4.PrintingDepartment
                     , Day5.Cafeteria
+                    , Day6.TrashCompactor
 
 
     -- LANGUAGE extensions used by modules in this package.

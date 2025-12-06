@@ -8,13 +8,14 @@ module Util where
 
 import Advent (AoC (AoCInput, AoCPrompt), Part (Part1), mkDay, mkDay_, runAoC_)
 import Control.Applicative ((<|>))
+import Control.Monad (liftM2)
 import Data.Array (array)
 import Data.Either (fromRight)
 import qualified Data.Either as Either
 import Data.HashPSQ (minView)
 import qualified Data.HashPSQ as HashPSQ
 import Data.Hashable (Hashable)
-import Data.List (tails, minimumBy)
+import Data.List (minimumBy, tails)
 import Data.Map (Map, (!))
 import qualified Data.Map as Map
 import Data.Maybe (mapMaybe)
@@ -28,6 +29,7 @@ import Debug.Trace (trace)
 import GHC.Generics (Generic)
 import GHC.RTS.Flags (RTSFlags (debugFlags))
 import GHC.SysTools (isContainedIn)
+import GHC.Utils.Misc (nTimes)
 import System.Directory (doesFileExist)
 import Text.HTML.Parser (Token (ContentText, TagClose, TagOpen), parseTokens)
 import Text.HTML.Tree (tokensToForest)
@@ -35,8 +37,6 @@ import Text.Megaparsec (Parsec, errorBundlePretty, parse)
 import Text.Megaparsec.Char (space)
 import qualified Text.Megaparsec.Char.Lexer as Lexer
 import Prelude hiding (Left, Right)
-import Control.Monad (liftM2)
-import GHC.Utils.Misc (nTimes)
 
 input aocOpts day = do
     let filePath = "./input/" ++ show day ++ ".input"
@@ -178,17 +178,16 @@ dijkstra neighbourGen start end = findPath (HashPSQ.singleton start 0 ()) Set.em
                 Just LT -> Map.insert newPosition [pos] predecessorMap
                 Nothing -> Map.alter ((<|> Just [pos]) . (id <$>)) newPosition predecessorMap
 
-
 findAllOnShortestPath end predecessors = walkPredecessors [end] Set.empty
-    where 
-        walkPredecessors [] visited = visited
-        walkPredecessors (p : ps) visited = walkPredecessors (maybe [] (filter (not . (`Set.member` visited))) (predecessors Map.!? p) ++ ps) (p `Set.insert` visited)
+  where
+    walkPredecessors [] visited = visited
+    walkPredecessors (p : ps) visited = walkPredecessors (maybe [] (filter (not . (`Set.member` visited))) (predecessors Map.!? p) ++ ps) (p `Set.insert` visited)
 
 -- Dealing with minimums
 
 keepMinsWith f xs = filter ((== minF xs) . f) xs
-    where
-        minF = minimum . map f
+  where
+    minF = minimum . map f
 
 minimumWith f = minimumBy (\a b -> compare (f a) (f b))
 
@@ -196,7 +195,14 @@ minimumWith f = minimumBy (\a b -> compare (f a) (f b))
 
 tmap f = mapFst f . mapSnd f
 
-tupleToList = uncurry . flip $ (flip (:) . (:[]))
+tupleToList = uncurry . flip $ (flip (:) . (: []))
 
 -- List ops
 dropLast n = nTimes n init
+
+splitOn x xs = splitOn' x xs []
+  where
+    splitOn' _ [] ys = [reverse ys]
+    splitOn' e (x : xs) ys
+        | e == x = reverse ys : splitOn' e xs []
+        | otherwise = splitOn' e xs (x : ys)

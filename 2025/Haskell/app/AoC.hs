@@ -10,6 +10,7 @@ import Day2.GiftShop (solveDay2)
 import Day3.Lobby (solveDay3)
 import Day4.PrintingDepartment (solveDay4)
 import Day5.Cafeteria (solveDay5)
+import Day6.TrashCompactor (solveDay6)
 
 main = do
     argStrings <- getArgs
@@ -38,7 +39,7 @@ daysOrAll [] = [1 ..]
 daysOrAll x = x
 
 days :: [String -> Bool -> IO ()]
-days = [solveDay1, solveDay2, solveDay3, solveDay4, solveDay5]
+days = [solveDay1, solveDay2, solveDay3, solveDay4, solveDay5, solveDay6]
 
 empty :: Bool -> IO ()
 empty _ = do
