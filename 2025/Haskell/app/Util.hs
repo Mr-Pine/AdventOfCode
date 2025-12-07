@@ -206,3 +206,9 @@ splitOn x xs = splitOn' x xs []
     splitOn' e (x : xs) ys
         | e == x = reverse ys : splitOn' e xs []
         | otherwise = splitOn' e xs (x : ys)
+
+chunked n xs = chunked' n xs []
+    where
+    chunked' 0 xs ys = reverse ys : chunked' n xs []
+    chunked' _ [] _ = []
+    chunked' m (x:xs) ys = chunked' (m-1) xs (x:ys)
