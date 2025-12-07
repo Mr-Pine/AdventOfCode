@@ -8,7 +8,7 @@ import qualified Text.Megaparsec.Char.Lexer as Lex
 import Util
 
 solveDay6 input _ = do
-    putStrLn "Day 6 - TrashCompactor:"
+    putStrLn "Day 6 - Trash Compactor:"
     problems <- parseOrError problemsParser input
     print . worksheetResult $ problems
     cProblems <- cephalopodProblems input
