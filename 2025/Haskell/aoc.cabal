@@ -34,6 +34,7 @@ executable aoc
                     , Day5.Cafeteria
                     , Day6.TrashCompactor
                     , Day7.Laboratories
+                    , Day8.Playground
 
 
     -- LANGUAGE extensions used by modules in this package.
