@@ -50,7 +50,7 @@ executable aoc
                     , text
                     , pretty-simple
                     , MissingH
-                    , advent-of-code-api
+                    , advent-of-code-api >=0.2.11.0
                     , directory
                     , containers
                     , array
@@ -64,5 +64,6 @@ executable aoc
                     , hashable
                     , mtl
                     , range
+                    , sbv
     hs-source-dirs:   app
     default-language: Haskell2010
