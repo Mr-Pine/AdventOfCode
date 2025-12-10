@@ -36,6 +36,7 @@ executable aoc
                     , Day7.Laboratories
                     , Day8.Playground
                     , Day9.MovieTheater
+                    , Day10.Factory
 
 
     -- LANGUAGE extensions used by modules in this package.
